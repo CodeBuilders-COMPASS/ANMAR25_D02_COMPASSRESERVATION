@@ -3,6 +3,7 @@ export interface Space {
     name: string;
     description?: string;
     capacity: number;
+    status: 'ACTIVE' | 'INACTIVE';
     createdAt: Date;
     updatedAt?: Date;
 }
