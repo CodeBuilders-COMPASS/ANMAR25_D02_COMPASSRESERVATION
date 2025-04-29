@@ -41,34 +41,43 @@ export class SpacesService {
         return newSpace;
       }
           
-      async findAll(filterDto: FilterSpaceDto): Promise<{ data: Space[]; total: number }> {
+      async findAll(filterDto: FilterSpaceDto): Promise<{ count: number; pages: number; data: Space[] }> {
         let filtered = [...this.spaces];
       
         if (filterDto.name !== undefined) {
+          const name = filterDto.name.toLowerCase();
           filtered = filtered.filter(space => 
-            space.name.toLowerCase().includes(filterDto.name!.toLowerCase())
+            space.name.toLowerCase().includes(name)
           );
         }
       
         if (filterDto.capacity !== undefined) {
-            const capacity = filterDto.capacity;
-            filtered = filtered.filter(space => space.capacity >= capacity);
-          }
-      
-        if (filterDto.status !== undefined) {
-          filtered = filtered.filter(space => space.status === filterDto.status);
+          const capacity = filterDto.capacity;
+          filtered = filtered.filter(space => space.capacity >= capacity);
         }
       
-        const page = filterDto.page || 1;
-        const limit = filterDto.limit || 10;
+        if (filterDto.status !== undefined) {
+          const status = filterDto.status;
+          filtered = filtered.filter(space => space.status === status);
+        }
+      
+        const total = filtered.length;
+      
+        const page = filterDto.page && filterDto.page > 0 ? filterDto.page : 1;
+        const limit = filterDto.limit && filterDto.limit > 0 ? filterDto.limit : 10;
         const start = (page - 1) * limit;
         const end = start + limit;
       
+        const data = filtered.slice(start, end);
+      
+        const pages = Math.ceil(total / limit);
+      
         return {
-          data: filtered.slice(start, end),
-          total: filtered.length,
+          count: total,
+          pages,
+          data,
         };
-      }
+      }      
     
       async findOne(id: number): Promise<Space> {
         const space = this.spaces.find(space => space.id === id);
