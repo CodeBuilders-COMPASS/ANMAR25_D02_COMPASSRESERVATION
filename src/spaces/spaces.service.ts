@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { Space } from './entities/space.entity';
 
@@ -23,13 +23,19 @@ export class SpacesService {
         },
     ];
     async create(createSpaceDto: CreateSpaceDto): Promise<Space> {
+        const nameExists = this.spaces.some(space => space.name === createSpaceDto.name);
+        if (nameExists) {
+          throw new BadRequestException('Space with this name already exists.');
+        }
+    
         const newSpace: Space = {
-            id: this.spaces.length + 1,
-            ...createSpaceDto,
-            status: 'ACTIVE',
-            createdAt: new Date(),
+          id: this.spaces.length + 1,
+          ...createSpaceDto,
+          status: 'ACTIVE',
+          createdAt: new Date(),
         };
+    
         this.spaces.push(newSpace);
         return newSpace;
-    }
+      }
 }
