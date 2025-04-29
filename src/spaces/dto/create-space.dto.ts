@@ -1,8 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, NotContains, Length } from 'class-validator';
 
 export class CreateSpaceDto {
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @NotContains(" ")
+  @Length(3, 56)
   name: string;
 
   @IsNotEmpty()
