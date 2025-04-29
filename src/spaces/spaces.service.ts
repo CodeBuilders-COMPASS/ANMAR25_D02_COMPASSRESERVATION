@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { FilterSpaceDto } from './dto/filter-space.dto';
+import { UpdateSpaceDto } from './dto/update-space.dto';
 import { Space } from './entities/space.entity';
 
 @Injectable()
@@ -74,6 +75,35 @@ export class SpacesService {
         if (!space) {
           throw new NotFoundException(`Space with ID ${id} not found.`);
         }
+        return space;
+      }
+      async update(id: number, updateDto: UpdateSpaceDto): Promise<Space> {
+        const space = await this.findOne(id);
+    
+        if (updateDto.name && updateDto.name !== space.name) {
+          const nameExists = this.spaces.some(s => s.name === updateDto.name && s.id !== id);
+          if (nameExists) {
+            throw new BadRequestException('Space with this name already exists.');
+          }
+          space.name = updateDto.name;
+        }
+    
+        if (updateDto.description !== undefined) {
+          space.description = updateDto.description;
+        }
+    
+        if (updateDto.capacity !== undefined) {
+          space.capacity = updateDto.capacity;
+        }
+    
+        space.updatedAt = new Date();
+        return space;
+      }
+    
+      async remove(id: number): Promise<Space> {
+        const space = await this.findOne(id);
+        space.status = 'INACTIVE';
+        space.updatedAt = new Date();
         return space;
       }
 }
