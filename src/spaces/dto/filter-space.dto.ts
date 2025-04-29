@@ -1,5 +1,6 @@
 import { IsOptional, IsString, IsInt, IsEnum, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import { StatusEnum } from 'src/enums/status.enum';
 
 export class FilterSpaceDto {
   @IsOptional()
@@ -13,8 +14,8 @@ export class FilterSpaceDto {
   capacity?: number;
 
   @IsOptional()
-  @IsEnum(['ACTIVE', 'INACTIVE'])
-  status?: 'ACTIVE' | 'INACTIVE';
+  @IsEnum(StatusEnum)
+  status?: StatusEnum;
 
   @IsOptional()
   @Type(() => Number)
