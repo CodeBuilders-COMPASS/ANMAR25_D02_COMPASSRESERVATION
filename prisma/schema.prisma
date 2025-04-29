@@ -9,12 +9,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
-enum Status {
-  ACTIVE
-  INACTIVE
-}
-
 model User {
   id    Int     @id @default(autoincrement()) 
   name  String  @db.VarChar(50) 
@@ -23,9 +17,15 @@ model User {
   phone  String?   @db.VarChar(20) 
   created_at DateTime @default(now()) 
   updated_at DateTime @updatedAt 
-  status Status @default(ACTIVE) 
+  status UserStatus @default(ACTIVE) 
 
   @@map("users") 
+}
+
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model Client {
@@ -37,9 +37,14 @@ model Client {
   phone      String   @db.VarChar(20)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  status     Status @default(ACTIVE)
+  status     ClientStatus @default(ACTIVE)
 
   @@map("clients")
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model Space {
@@ -49,9 +54,14 @@ model Space {
   capacity    Int
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  status      Status @default(ACTIVE)
+  status      SpaceStatus @default(ACTIVE)
 
   @@map("spaces")
+}
+
+enum SpaceStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model Resource {
@@ -61,9 +71,14 @@ model Resource {
   description String?  @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  status      Status @default(ACTIVE)
+  status      ResourceStatus @default(ACTIVE)
 
   @@map("resources")
+}
+
+enum ResourceStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model Reservation {
