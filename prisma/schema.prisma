@@ -7,23 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum Status {
-  ACTIVE
-  INACTIVE
-}
-
 model User {
-  id    Int     @id @default(autoincrement()) 
-  name  String  @db.VarChar(50) 
-  email String  @unique @db.VarChar(50) 
-  password String  @db.VarChar(50) 
-  phone  String?   @db.VarChar(20) 
-  created_at DateTime @default(now()) 
-  updated_at DateTime @updatedAt 
-  status Status @default(ACTIVE) 
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(50)
+  email      String   @unique @db.VarChar(50)
+  password   String   @db.VarChar(50)
+  phone      String?  @db.VarChar(20)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Status   @default(ACTIVE)
 
-  @@map("users") 
+  @@map("users")
 }
 
 model Client {
@@ -35,7 +29,7 @@ model Client {
   phone      String   @db.VarChar(20)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  status     Status @default(ACTIVE)
+  status     Status   @default(ACTIVE)
 
   @@map("clients")
 }
@@ -47,7 +41,7 @@ model Space {
   capacity    Int
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  status      Status @default(ACTIVE)
+  status      Status   @default(ACTIVE)
 
   @@map("spaces")
 }
@@ -59,31 +53,24 @@ model Resource {
   description String?  @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  status      Status @default(ACTIVE)
+  status      Status   @default(ACTIVE)
 
   @@map("resources")
 }
 
 model Reservation {
-  id        Int      @id @default(autoincrement())
-  user_id   Int
-  space_id  Int
-  client_id Int
+  id         Int               @id @default(autoincrement())
+  user_id    Int
+  space_id   Int
+  client_id  Int
   start_date DateTime
   end_date   DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  status      ReservationStatus @default(OPEN)
-  closed_at DateTime?
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+  status     ReservationStatus @default(OPEN)
+  closed_at  DateTime?
 
   @@map("reservations")
-}
-
-enum ReservationStatus {
-  OPEN
-  APPROVED
-  CLOSED
-  CANCELLED
 }
 
 model SpaceResource {
@@ -101,4 +88,16 @@ model ReservationResource {
 
   @@id([reservation_id, resource_id])
   @@map("reservation_resources")
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum ReservationStatus {
+  OPEN
+  APPROVED
+  CLOSED
+  CANCELLED
 }
