@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Post, Delete, Query, ParseIntPipe, Patch 
 import { ReservationService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { CancelReservationDto } from './dto/cancel-reservation.dto';
 
 @Controller('reservations')
 export class ReservationController {
@@ -37,7 +36,7 @@ export class ReservationController {
 
   // Endpoint para cancelar uma reserva
   @Patch(':id/cancel') // Alterado para PATCH e caminho "/cancel"
-  async cancel(@Param('id') id: number) {
+  async cancel(@Param('id', ParseIntPipe) id: number) {
     return this.reservationService.cancel(id); // Chama o método de cancelamento
   }
 }
