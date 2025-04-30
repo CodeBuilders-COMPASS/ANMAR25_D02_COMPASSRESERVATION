@@ -7,29 +7,28 @@ export class UpdateReservationDto {
   @IsOptional()
   @IsInt()
   @IsNotEmpty()
-  client_id?: number; // ID do cliente (caso queira atualizar)
+  client_id?: number; 
 
   @IsOptional()
   @IsInt()
   @IsNotEmpty()
-  space_id?: number; // ID do espaço reservado (caso queira atualizar)
+  space_id?: number; 
 
   @IsOptional()
   @IsDateString()
   @IsNotEmpty()
-  start_date?: string; // Nova data de início
+  start_date?: string; 
 
   @IsOptional()
   @IsDateString()
   @IsNotEmpty()
-  end_date?: string; // Nova data de término
-
+  end_date?: string; 
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
   resources?: Array<{
-    resource_id: number; // ID do recurso
-    quantity: number;  // Quantidade de recursos solicitados
+    resource_id: number; 
+    quantity: number;  
   }>;
 
   @IsOptional()

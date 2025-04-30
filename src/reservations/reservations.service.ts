@@ -9,48 +9,7 @@ export class ReservationService {
 
   async create(data: CreateReservationDto) {
     const { client_id, space_id, start_date, end_date, resources } = data;
-
-    // Verifica se o cliente existe e está ativo
-    const client = await this.prisma.client.findUnique({ where: { id: client_id } });
-    if (!client || client.status !== 'ACTIVE') {
-      throw new BadRequestException('Inactive or nonexistent client');
-    }
-
-    // Verifica se o espaço existe e está ativo
-    const space = await this.prisma.space.findUnique({ where: { id: space_id } });
-    if (!space || space.status !== 'ACTIVE') {
-      throw new BadRequestException('Inactive or nonexistent space');
-    }
-
-    // Valida os recursos
-    for (const res of resources) {
-      const resource = await this.prisma.resource.findUnique({ where: { id: res.resource_id } });
-      if (!resource || resource.status !== 'ACTIVE') {
-        throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
-      }
-      if (resource.quantity < res.quantity) {
-        throw new BadRequestException(`Insufficient quantity for resource ${resource.name}`);
-      }
-    }
-
-    // Verifica se já existe conflito de horário
-    const conflict = await this.prisma.reservation.findFirst({
-      where: {
-        space_id,
-        status: { notIn: ['CANCELLED'] },
-        OR: [
-          {
-            start_date: { lte: new Date(end_date) },
-            end_date: { gte: new Date(start_date) },
-          },
-        ],
-      },
-    });
-    if (conflict) {
-      throw new BadRequestException('Reservation conflict for the selected time and space');
-    }
-
-    // Cria a reserva
+  
     const reservation = await this.prisma.reservation.create({
       data: {
         client_id,
@@ -67,8 +26,7 @@ export class ReservationService {
         },
       },
     });
-
-    // Atualiza as quantidades dos recursos
+  
     for (const res of resources) {
       await this.prisma.resource.update({
         where: { id: res.resource_id },
@@ -79,7 +37,7 @@ export class ReservationService {
         },
       });
     }
-
+  
     return reservation;
   }
 
@@ -113,7 +71,7 @@ export class ReservationService {
       throw new BadRequestException('Space is inactive or does not exist');
     }
   
-    // Verifica e valida os recursos, se forem enviados
+    
     if (dto.resources && dto.resources.length > 0) {
       for (const res of dto.resources) {
         const resource = await this.prisma.resource.findUnique({ where: { id: res.resource_id } });
@@ -125,12 +83,12 @@ export class ReservationService {
         }
       }
   
-      // Remove recursos antigos
+      
       await this.prisma.reservationResource.deleteMany({
         where: { reservation_id: id },
       });
   
-      // Cria novos recursos
+      
       await this.prisma.reservationResource.createMany({
         data: dto.resources.map((r) => ({
           reservation_id: id,
@@ -140,7 +98,7 @@ export class ReservationService {
       });
     }
   
-    // Prepara os dados dinamicamente (não envia undefined para o Prisma)
+    
     const dataToUpdate: any = {
       ...(dto.client_id !== undefined && { client_id: dto.client_id }),
       ...(dto.space_id !== undefined && { space_id: dto.space_id }),
