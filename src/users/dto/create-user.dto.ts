@@ -18,5 +18,5 @@ export class CreateUserDto {
   password: string;
 
   @IsMobilePhone("pt-BR")
-  telephone: string;
+  phone: string;
 }
