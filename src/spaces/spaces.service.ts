@@ -38,7 +38,7 @@ export class SpacesService {
     const skip = (page - 1) * limit;
 
     const where = {
-      name: name ? { contains: name, mode: 'insensitive' } : undefined,
+      name: name ? { contains: name } : undefined,
       capacity: capacity ? { gte: capacity } : undefined,
       status: status ?? undefined,
     };
