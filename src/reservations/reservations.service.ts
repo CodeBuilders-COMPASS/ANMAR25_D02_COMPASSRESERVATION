@@ -60,7 +60,7 @@ export class ReservationService {
         start_date: new Date(start_date),
         end_date: new Date(end_date),
         status: 'OPEN',
-        ReservationResource: {
+        resources: {
           create: resources.map(r => ({
             resource_id: r.resource_id,
             quantity: r.quantity,
@@ -87,17 +87,18 @@ export class ReservationService {
     async update(id: number, dto: UpdateReservationDto) {
         // Busca a reserva
         const reservation = await this.prisma.reservation.findUnique({
-        where: { id },
-        include: {
-            client: true,
-            space: true,
-            resources: {
+            where: { id },
             include: {
-                resource: true,
+              client: true,
+              space: true,
+              resources: {
+                include: {
+                  resource: true,
+                },
+              },
             },
-            },
-        },
-        });
+          });
+          
     
         if (!reservation) {
         throw new BadRequestException('Reservation not found');
@@ -228,7 +229,7 @@ export class ReservationService {
           where: { id },
           data: {
             status: 'CANCELLED', // Altera o status para cancelado
-            updatedAt: new Date(), // Salva a data de alteração
+            updated_at: new Date(), // Salva a data de alteração
           },
         });
     

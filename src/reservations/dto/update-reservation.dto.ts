@@ -1,4 +1,7 @@
 import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+import { StatusEnum } from 'src/enums/status.enum';
+
+
 
 export class UpdateReservationDto {
   @IsOptional()
@@ -31,5 +34,5 @@ export class UpdateReservationDto {
 
   @IsOptional()
   @IsNotEmpty()
-  status?: string; // Novo status (caso queira atualizar)
+  status?: StatusEnum;
 }
