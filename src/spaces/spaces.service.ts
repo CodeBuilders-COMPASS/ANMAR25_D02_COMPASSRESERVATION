@@ -90,11 +90,11 @@ export class SpacesService {
   }
 
   async remove(id: number) {
-    await this.findOne(id); // Throws if not found
+    await this.findOne(id); 
     return this.prisma.space.update({
       where: { id },
       data: {
-        status: StatusEnum.ACTIVE,
+        status: StatusEnum.INACTIVE, 
         updated_at: new Date(),
       },
     });

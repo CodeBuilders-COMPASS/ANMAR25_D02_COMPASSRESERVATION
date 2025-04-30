@@ -25,9 +25,9 @@ export class SpacesController {
     update(@Param('id', ParseIntPipe) id: number, @Body() updateSpaceDto: UpdateSpaceDto) {
       return this.spacesService.update(id, updateSpaceDto);
     }
-  
-    @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id: number) {
-      return this.spacesService.remove(id);
+    @Delete(':id/deactivate')
+    async deactivate(@Param('id', ParseIntPipe) id: number) {
+      return this.spacesService.remove(+id); // this sets status to INACTIVE
     }
+  
 }
