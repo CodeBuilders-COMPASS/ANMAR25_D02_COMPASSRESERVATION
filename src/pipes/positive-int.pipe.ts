@@ -12,7 +12,7 @@ import {
   
       if (isNaN(val) || val <= 0) {
         throw new BadRequestException(
-          'O número da página deve ser um inteiro positivo.',
+          'Você precisa inserir um inteiro e positivo.',
         );
       }
   

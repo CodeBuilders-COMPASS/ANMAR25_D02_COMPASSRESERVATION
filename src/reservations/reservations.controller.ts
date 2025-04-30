@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Delete, Query, ParseIntPipe, Patch,
 import { ReservationService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { PositiveIntPipe } from './pipes/positive-int.pipe';
+import { PositiveIntPipe } from '../pipes/positive-int.pipe';
 
 @Controller('reservations')
 export class ReservationController {
@@ -16,7 +16,7 @@ export class ReservationController {
 
   // Endpoint para editar uma reserva existente
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe()) dto: UpdateReservationDto) {
+  async update(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number, @Body(new ValidationPipe()) dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
   }
 
@@ -29,13 +29,13 @@ export class ReservationController {
 
   // Endpoint para buscar uma reserva por ID (com regras de negócio aplicadas)
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number) {
     return this.reservationService.findOne(id);
   }
 
   // Endpoint para cancelar uma reserva
-  @Patch(':id/cancel') // Alterado para PATCH e caminho "/cancel"
-  async cancel(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationService.cancel(id); // Chama o método de cancelamento
+  @Patch(':id/cancel')
+  async cancel(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number) {
+    return this.reservationService.cancel(id);
   }
 }
