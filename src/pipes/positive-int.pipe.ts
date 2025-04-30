@@ -12,7 +12,7 @@ import {
   
       if (isNaN(val) || val <= 0) {
         throw new BadRequestException(
-          'Você precisa inserir um inteiro e positivo.',
+          'The value must be a positive integer.',
         );
       }
   
