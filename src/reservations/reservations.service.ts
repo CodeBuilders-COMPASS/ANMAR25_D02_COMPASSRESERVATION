@@ -59,7 +59,7 @@ export class ReservationService {
         start_date: new Date(start_date),
         end_date: new Date(end_date),
         status: 'OPEN',
-        resources: {
+        reservationResources: {
           create: resources.map(r => ({
             resource_id: r.resource_id,
             quantity: r.quantity,
@@ -83,158 +83,169 @@ export class ReservationService {
     return reservation;
   }
 
-    async update(id: number, dto: UpdateReservationDto) {
-        // Busca a reserva
-        const reservation = await this.prisma.reservation.findUnique({
-            where: { id },
-            include: {
-              client: true,
-              space: true,
-              resources: {
-                include: {
-                  resource: true,
-                },
-              },
-            },
-          });
-          
-    
-        if (!reservation) {
-        throw new BadRequestException('Reservation not found');
-        }
-    
-        // Verifica se a reserva está com status OPEN
-        if (reservation.status !== 'OPEN') {
-        throw new BadRequestException('Only reservations with status OPEN can be updated');
-        }
-    
-        // Verifica se o cliente está ativo
-        if (!reservation.client || reservation.client.status !== 'ACTIVE') {
-        throw new BadRequestException('Client is inactive or does not exist');
-        }
-    
-        // Verifica se o espaço está ativo
-        if (!reservation.space || reservation.space.status !== 'ACTIVE') {
-        throw new BadRequestException('Space is inactive or does not exist');
-        }
-    
-        // Atualiza parcialmente a reserva com os dados recebidos no DTO
-        const updatedReservation = await this.prisma.reservation.update({
-        where: { id },
-        data: dto,  // Atualiza com os dados recebidos no DTO
-        });
-    
-        return updatedReservation;
-    }
-  
-
-  // reservations.service.ts
-    async findAll(page: number = 1) {
-        const take = 10; // Limita 10 resultados por página
-        const skip = (page - 1) * take;
-    
-        // Conta o número total de reservas
-        const totalReservations = await this.prisma.reservation.count();
-    
-        // Calcula o número total de páginas
-        const totalPages = Math.ceil(totalReservations / take);
-    
-        // Busca as reservas da página solicitada
-        const reservations = await this.prisma.reservation.findMany({
-        skip,
-        take,
-        include: {
-            client: true,
-            space: true,
-            resources: {
-            include: {
-                resource: true,
-            },
-            },
-        },
-        });
-    
-        // Retorna as reservas e o total de páginas
-        return {
-        reservations,
-        totalPages,  // Inclui o número total de páginas
-        totalReservations,  // Também podemos retornar o total de reservas
-        };
-    }
-  
-    async findOne(id: number) {
-        // Busca a reserva
-        const reservation = await this.prisma.reservation.findUnique({
-          where: { id },
+  async update(id: number, dto: UpdateReservationDto) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+      include: {
+        client: true,
+        space: true,
+        reservationResources: {
           include: {
-            client: true,
-            space: true,
-            resources: {
-              include: {
-                resource: true,
-              },
-            },
+            resource: true,
           },
-        });
-      
-        // Se não existir
-        if (!reservation) {
-          throw new BadRequestException('Reservation not found');
+        },
+      },
+    });
+  
+    if (!reservation) {
+      throw new BadRequestException('Reservation not found');
+    }
+  
+    if (reservation.status !== 'OPEN') {
+      throw new BadRequestException('Only reservations with status OPEN can be updated');
+    }
+  
+    if (!reservation.client || reservation.client.status !== 'ACTIVE') {
+      throw new BadRequestException('Client is inactive or does not exist');
+    }
+  
+    if (!reservation.space || reservation.space.status !== 'ACTIVE') {
+      throw new BadRequestException('Space is inactive or does not exist');
+    }
+  
+    // Verifica e valida os recursos, se forem enviados
+    if (dto.resources && dto.resources.length > 0) {
+      for (const res of dto.resources) {
+        const resource = await this.prisma.resource.findUnique({ where: { id: res.resource_id } });
+        if (!resource || resource.status !== 'ACTIVE') {
+          throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
         }
-      
-        // Verifica se a reserva está com status OPEN
-        if (reservation.status !== 'OPEN') {
-          throw new BadRequestException('Only reservations with status OPEN can be viewed');
+        if (resource.quantity < res.quantity) {
+          throw new BadRequestException(`Insufficient quantity for resource ${resource.name}`);
         }
-      
-        // Verifica se o cliente está ativo
-        if (!reservation.client || reservation.client.status !== 'ACTIVE') {
-          throw new BadRequestException('Client is inactive or does not exist');
-        }
-      
-        // Verifica se o espaço está ativo
-        if (!reservation.space || reservation.space.status !== 'ACTIVE') {
-          throw new BadRequestException('Space is inactive or does not exist');
-        }
-      
-        // Verifica se todos os recursos estão ativos
-        for (const res of reservation.resources) {
-          if (!res.resource || res.resource.status !== 'ACTIVE') {
-            throw new BadRequestException(`Resource ID ${res.resource_id} is inactive or does not exist`);
-          }
-        }
-      
-        return reservation;
       }
-      
-      async cancel(id: number) {
-        // Busca a reserva no banco de dados
-        const reservation = await this.prisma.reservation.findUnique({
-          where: { id },
-        });
-    
-        // Verifica se a reserva existe
-        if (!reservation) {
-          throw new NotFoundException('Reservation not found');
-        }
-    
-        // Verifica se a reserva está com status OPEN
-        if (reservation.status !== 'OPEN') {
-          throw new BadRequestException('Only reservations with status OPEN can be cancelled');
-        }
-    
-        // Atualiza o status da reserva para CANCELLED e registra a data da alteração
-        const updatedReservation = await this.prisma.reservation.update({
-          where: { id },
-          data: {
-            status: 'CANCELLED', // Altera o status para cancelado
-            updated_at: new Date(), // Salva a data de alteração
+  
+      // Remove recursos antigos
+      await this.prisma.reservationResource.deleteMany({
+        where: { reservation_id: id },
+      });
+  
+      // Cria novos recursos
+      await this.prisma.reservationResource.createMany({
+        data: dto.resources.map((r) => ({
+          reservation_id: id,
+          resource_id: r.resource_id,
+          quantity: r.quantity,
+        })),
+      });
+    }
+  
+    // Prepara os dados dinamicamente (não envia undefined para o Prisma)
+    const dataToUpdate: any = {
+      ...(dto.client_id !== undefined && { client_id: dto.client_id }),
+      ...(dto.space_id !== undefined && { space_id: dto.space_id }),
+      ...(dto.start_date !== undefined && { start_date: new Date(dto.start_date) }),
+      ...(dto.end_date !== undefined && { end_date: new Date(dto.end_date) }),
+      ...(dto.status !== undefined && { status: dto.status }),
+    };
+  
+    const updatedReservation = await this.prisma.reservation.update({
+      where: { id },
+      data: dataToUpdate,
+    });
+  
+    return updatedReservation;
+  }
+  
+
+  async findAll(page: number = 1) {
+    const take = 10;
+    const skip = (page - 1) * take;
+
+    const totalReservations = await this.prisma.reservation.count();
+    const totalPages = Math.ceil(totalReservations / take);
+
+    const reservations = await this.prisma.reservation.findMany({
+      skip,
+      take,
+      include: {
+        client: true,
+        space: true,
+        reservationResources: {
+          include: {
+            resource: true,
           },
-        });
-    
-        return updatedReservation; // Retorna a reserva atualizada
+        },
+      },
+    });
+
+    return {
+      reservations,
+      totalPages,
+      totalReservations,
+    };
+  }
+
+  async findOne(id: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+      include: {
+        client: true,
+        space: true,
+        reservationResources: {
+          include: {
+            resource: true,
+          },
+        },
+      },
+    });
+
+    if (!reservation) {
+      throw new BadRequestException('Reservation not found');
+    }
+
+    if (reservation.status !== 'OPEN') {
+      throw new BadRequestException('Only reservations with status OPEN can be viewed');
+    }
+
+    if (!reservation.client || reservation.client.status !== 'ACTIVE') {
+      throw new BadRequestException('Client is inactive or does not exist');
+    }
+
+    if (!reservation.space || reservation.space.status !== 'ACTIVE') {
+      throw new BadRequestException('Space is inactive or does not exist');
+    }
+
+    for (const res of reservation.reservationResources) {
+      if (!res.resource || res.resource.status !== 'ACTIVE') {
+        throw new BadRequestException(`Resource ID ${res.resource_id} is inactive or does not exist`);
       }
     }
 
+    return reservation;
+  }
 
-  
+  async cancel(id: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    if (reservation.status !== 'OPEN') {
+      throw new BadRequestException('Only reservations with status OPEN can be cancelled');
+    }
+
+    const updatedReservation = await this.prisma.reservation.update({
+      where: { id },
+      data: {
+        status: 'CANCELLED',
+        updated_at: new Date(),
+      },
+    });
+
+    return updatedReservation;
+  }
+}
