@@ -7,6 +7,7 @@ import { ClientValidationPipe } from 'src/pipes/validate-client.pipe';
 import { SpaceValidationPipe } from 'src/pipes/validate-space.pipe';
 import { ResourceValidationPipe } from 'src/pipes/validate-resources.pipe';
 import { ReservationConflictPipe } from 'src/pipes/check-reservation-conflict.pipe';
+import { ReservationExistsPipe } from 'src/pipes/reservation-exists.pipe';
 
 @Controller('reservations')
 export class ReservationController {
@@ -45,9 +46,12 @@ export class ReservationController {
 
   
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number) {
-    return this.reservationService.findOne(id);
+  async findOne(
+    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) reservation
+  ) {
+    return this.reservationService.findOne(reservation);
   }
+
 
   
   @Patch(':id/cancel')

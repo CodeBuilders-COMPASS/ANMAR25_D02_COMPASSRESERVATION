@@ -91,94 +91,60 @@ export class ReservationService {
     }
   
 
-  async findAll(page: number = 1) {
-    const take = 10;
-    const skip = (page - 1) * take;
+    async findAll(page: number = 1) {
+        const take = 10;
+        const skip = (page - 1) * take;
 
-    const totalReservations = await this.prisma.reservation.count();
-    const totalPages = Math.ceil(totalReservations / take);
+        const totalReservations = await this.prisma.reservation.count();
+        const totalPages = Math.ceil(totalReservations / take);
 
-    const reservations = await this.prisma.reservation.findMany({
-      skip,
-      take,
-      include: {
-        client: true,
-        space: true,
-        reservationResources: {
-          include: {
-            resource: true,
-          },
+        const reservations = await this.prisma.reservation.findMany({
+        skip,
+        take,
+        include: {
+            client: true,
+            space: true,
+            reservationResources: {
+            include: {
+                resource: true,
+            },
+            },
         },
-      },
-    });
+        });
 
-    return {
-      reservations,
-      totalPages,
-      totalReservations,
-    };
-  }
+        return {
+        reservations,
+        totalPages,
+        totalReservations,
+        };
+    }
 
-  async findOne(id: number) {
-    const reservation = await this.prisma.reservation.findUnique({
-      where: { id },
-      include: {
-        client: true,
-        space: true,
-        reservationResources: {
-          include: {
-            resource: true,
-          },
+    async findOne(reservation: any) {
+        return reservation;
+    }
+    
+
+    async cancel(id: number) {
+        const reservation = await this.prisma.reservation.findUnique({
+        where: { id },
+        });
+
+        if (!reservation) {
+        throw new NotFoundException('Reservation not found');
+        }
+
+        if (reservation.status !== 'OPEN') {
+        throw new BadRequestException('Only reservations with status OPEN can be cancelled');
+        }
+
+        const updatedReservation = await this.prisma.reservation.update({
+        where: { id },
+        data: {
+            status: 'CANCELLED',
+            updated_at: new Date(),
         },
-      },
-    });
+        });
 
-    if (!reservation) {
-      throw new BadRequestException('Reservation not found');
+        return updatedReservation;
     }
-
-    if (reservation.status !== 'OPEN') {
-      throw new BadRequestException('Only reservations with status OPEN can be viewed');
     }
-
-    if (!reservation.client || reservation.client.status !== 'ACTIVE') {
-      throw new BadRequestException('Client is inactive or does not exist');
-    }
-
-    if (!reservation.space || reservation.space.status !== 'ACTIVE') {
-      throw new BadRequestException('Space is inactive or does not exist');
-    }
-
-    for (const res of reservation.reservationResources) {
-      if (!res.resource || res.resource.status !== 'ACTIVE') {
-        throw new BadRequestException(`Resource ID ${res.resource_id} is inactive or does not exist`);
-      }
-    }
-
-    return reservation;
-  }
-
-  async cancel(id: number) {
-    const reservation = await this.prisma.reservation.findUnique({
-      where: { id },
-    });
-
-    if (!reservation) {
-      throw new NotFoundException('Reservation not found');
-    }
-
-    if (reservation.status !== 'OPEN') {
-      throw new BadRequestException('Only reservations with status OPEN can be cancelled');
-    }
-
-    const updatedReservation = await this.prisma.reservation.update({
-      where: { id },
-      data: {
-        status: 'CANCELLED',
-        updated_at: new Date(),
-      },
-    });
-
-    return updatedReservation;
-  }
-}
