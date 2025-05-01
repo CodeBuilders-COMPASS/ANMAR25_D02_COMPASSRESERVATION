@@ -41,79 +41,54 @@ export class ReservationService {
     return reservation;
   }
 
-  async update(id: number, dto: UpdateReservationDto) {
-    const reservation = await this.prisma.reservation.findUnique({
-      where: { id },
-      include: {
-        client: true,
-        space: true,
-        reservationResources: {
-          include: {
-            resource: true,
-          },
+    async update(id: number, dto: UpdateReservationDto) {
+        const reservation = await this.prisma.reservation.findUnique({
+        where: { id },
+        include: {
+            reservationResources: true,
         },
-      },
-    });
-  
-    if (!reservation) {
-      throw new BadRequestException('Reservation not found');
-    }
-  
-    if (reservation.status !== 'OPEN') {
-      throw new BadRequestException('Only reservations with status OPEN can be updated');
-    }
-  
-    if (!reservation.client || reservation.client.status !== 'ACTIVE') {
-      throw new BadRequestException('Client is inactive or does not exist');
-    }
-  
-    if (!reservation.space || reservation.space.status !== 'ACTIVE') {
-      throw new BadRequestException('Space is inactive or does not exist');
-    }
-  
+        });
     
-    if (dto.resources && dto.resources.length > 0) {
-      for (const res of dto.resources) {
-        const resource = await this.prisma.resource.findUnique({ where: { id: res.resource_id } });
-        if (!resource || resource.status !== 'ACTIVE') {
-          throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
+        if (!reservation) {
+        throw new BadRequestException('Reservation not found');
         }
-        if (resource.quantity < res.quantity) {
-          throw new BadRequestException(`Insufficient quantity for resource ${resource.name}`);
-        }
-      }
-  
-      
-      await this.prisma.reservationResource.deleteMany({
-        where: { reservation_id: id },
-      });
-  
-      
-      await this.prisma.reservationResource.createMany({
-        data: dto.resources.map((r) => ({
-          reservation_id: id,
-          resource_id: r.resource_id,
-          quantity: r.quantity,
-        })),
-      });
-    }
-  
     
-    const dataToUpdate: any = {
-      ...(dto.client_id !== undefined && { client_id: dto.client_id }),
-      ...(dto.space_id !== undefined && { space_id: dto.space_id }),
-      ...(dto.start_date !== undefined && { start_date: new Date(dto.start_date) }),
-      ...(dto.end_date !== undefined && { end_date: new Date(dto.end_date) }),
-      ...(dto.status !== undefined && { status: dto.status }),
-    };
-  
-    const updatedReservation = await this.prisma.reservation.update({
-      where: { id },
-      data: dataToUpdate,
-    });
-  
-    return updatedReservation;
-  }
+        if (reservation.status !== 'OPEN') {
+        throw new BadRequestException('Only reservations with status OPEN can be updated');
+        }
+    
+        
+        if (dto.resources && dto.resources.length > 0) {
+        
+        await this.prisma.reservationResource.deleteMany({
+            where: { reservation_id: id },
+        });
+    
+        
+        await this.prisma.reservationResource.createMany({
+            data: dto.resources.map((r) => ({
+            reservation_id: id,
+            resource_id: r.resource_id,
+            quantity: r.quantity,
+            })),
+        });
+        }
+    
+        const dataToUpdate: any = {
+        ...(dto.client_id && { client_id: dto.client_id }),
+        ...(dto.space_id && { space_id: dto.space_id }),
+        ...(dto.start_date && { start_date: new Date(dto.start_date) }),
+        ...(dto.end_date && { end_date: new Date(dto.end_date) }),
+        ...(dto.status && { status: dto.status }),
+        };
+    
+        const updatedReservation = await this.prisma.reservation.update({
+        where: { id },
+        data: dataToUpdate,
+        });
+    
+        return updatedReservation;
+    }
   
 
   async findAll(page: number = 1) {

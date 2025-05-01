@@ -27,7 +27,12 @@ export class ReservationController {
 
   
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number, @Body(new ValidationPipe()) dto: UpdateReservationDto) {
+  @UsePipes(
+    ClientValidationPipe,
+    SpaceValidationPipe,
+    ResourceValidationPipe
+  )
+  async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
   }
 

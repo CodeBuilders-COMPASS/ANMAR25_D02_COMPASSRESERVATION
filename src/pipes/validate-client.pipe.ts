@@ -6,6 +6,10 @@ export class ClientValidationPipe implements PipeTransform {
   constructor(private readonly prisma: PrismaService) {}
 
   async transform(value: any) {
+    if (!value.client_id) {
+      throw new BadRequestException('client_id is required');
+    }
+
     const client = await this.prisma.client.findUnique({
       where: { id: value.client_id },
     });
