@@ -126,25 +126,25 @@ export class ReservationService {
 
     async cancel(id: number) {
         const reservation = await this.prisma.reservation.findUnique({
-        where: { id },
+          where: { id },
         });
-
+    
         if (!reservation) {
-        throw new NotFoundException('Reservation not found');
+          throw new NotFoundException('Reservation not found');
         }
-
+    
         if (reservation.status !== 'OPEN') {
-        throw new BadRequestException('Only reservations with status OPEN can be cancelled');
+          throw new BadRequestException('Only reservations with status OPEN can be cancelled');
         }
-
+    
         const updatedReservation = await this.prisma.reservation.update({
-        where: { id },
-        data: {
+          where: { id },
+          data: {
             status: 'CANCELLED',
             updated_at: new Date(),
-        },
+          },
         });
-
+    
         return updatedReservation;
     }
-    }
+}

@@ -25,8 +25,6 @@ export class ReservationController {
     return this.reservationService.create(data);
   }
 
-
-  
   @Patch(':id')
   @UsePipes(
     ClientValidationPipe,
@@ -37,13 +35,10 @@ export class ReservationController {
     return this.reservationService.update(id, dto);
   }
 
-  
   @Get()
   async findAll(@Query('page', new PositiveIntPipe()) page = 1) {
     return this.reservationService.findAll(page);
   }
-  
-
   
   @Get(':id')
   async findOne(
@@ -52,10 +47,10 @@ export class ReservationController {
     return this.reservationService.findOne(reservation);
   }
 
-
-  
   @Patch(':id/cancel')
-  async cancel(@Param('id', ParseIntPipe, new PositiveIntPipe()) id: number) {
+  async cancel(
+    @Param('id', ParseIntPipe, new PositiveIntPipe()) id: number
+  ) {
     return this.reservationService.cancel(id);
   }
 }
