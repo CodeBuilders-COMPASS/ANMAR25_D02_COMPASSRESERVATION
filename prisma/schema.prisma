@@ -1,34 +1,33 @@
-
-
-datasource db {
-  provider = "mysql" 
-  url      = env("DATABASE_URL") 
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
 
 enum Status {
   ACTIVE
   INACTIVE
 }
 
-enum StatusReservationEnum{
+enum ReservationStatus {
   OPEN
+  APPROVED
+  CLOSED
   CANCELLED
 }
 
 model User {
-  id          Int           @id @default(autoincrement()) 
-  name        String        @db.VarChar(50) 
-  email       String        @unique @db.VarChar(50) 
-  password    String        @db.VarChar(50) 
-  phone       String?       @db.VarChar(20) 
-  created_at  DateTime      @default(now()) 
-  updated_at  DateTime      @updatedAt 
-  status      Status        @default(ACTIVE)
+  id         Int         @id @default(autoincrement()) 
+  name       String      @db.VarChar(50) 
+  email      String      @unique @db.VarChar(50) 
+  password   String      @db.VarChar(50) 
+  phone      String?     @db.VarChar(20) 
+  created_at DateTime    @default(now()) 
+  updated_at DateTime    @updatedAt 
+  status     Status      @default(ACTIVE)
 
   reservations Reservation[] // relação com Reservation
 
@@ -36,15 +35,15 @@ model User {
 }
 
 model Client {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(50)
-  cpf         String        @unique @db.VarChar(14)
-  birth_date  DateTime
-  email       String        @unique @db.VarChar(50)
-  phone       String        @db.VarChar(20)
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  status      Status        @default(ACTIVE)
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(50)
+  cpf        String      @unique @db.VarChar(14)
+  birth_date DateTime
+  email      String      @unique @db.VarChar(50)
+  phone      String      @db.VarChar(20)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  status     Status      @default(ACTIVE)
 
   reservations Reservation[] // relação com Reservation
 
@@ -52,50 +51,50 @@ model Client {
 }
 
 model Space {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique @db.VarChar(50)
-  description String        @db.Text
-  capacity    Int
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  status      Status        @default(ACTIVE)
+  id              Int              @id @default(autoincrement())
+  name            String           @unique @db.VarChar(50)
+  description     String           @db.Text
+  capacity        Int
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  status          Status           @default(ACTIVE)
 
-  reservations Reservation[]
-  spaceResources SpaceResource[] // relação N:N com Resource
+  reservations    Reservation[]
+  spaceResources  SpaceResource[] // relação N:N com Resource
 
   @@map("spaces")
 }
 
 model Resource {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique @db.VarChar(50)
-  quantity    Int
-  description String?       @db.Text
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  status      Status        @default(ACTIVE)
+  id                   Int                   @id @default(autoincrement())
+  name                 String                @unique @db.VarChar(50)
+  quantity             Int
+  description          String?               @db.Text
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  status               Status                @default(ACTIVE)
 
-  spaceResources SpaceResource[] 
+  spaceResources       SpaceResource[] 
   reservationResources ReservationResource[]
 
   @@map("resources")
 }
 
 model Reservation {
-  id          Int           @id @default(autoincrement())
-  user_id     Int
-  space_id    Int
-  client_id   Int
-  start_date  DateTime
-  end_date    DateTime
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  status      StatusReservationEnum @default(OPEN)
-  closed_at   DateTime?
+  id                   Int                   @id @default(autoincrement())
+  user_id              Int
+  space_id             Int
+  client_id            Int
+  start_date           DateTime
+  end_date             DateTime
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  status               ReservationStatus     @default(OPEN)
+  closed_at            DateTime?
 
-  user        User          @relation(fields: [user_id], references: [id])
-  space       Space         @relation(fields: [space_id], references: [id])
-  client      Client        @relation(fields: [client_id], references: [id])
+  user                 User                  @relation(fields: [user_id], references: [id])
+  space                Space                 @relation(fields: [space_id], references: [id])
+  client               Client                @relation(fields: [client_id], references: [id])
   reservationResources ReservationResource[]
 
   @@map("reservations")
@@ -123,4 +122,3 @@ model ReservationResource {
   @@id([reservation_id, resource_id])
   @@map("reservation_resources")
 }
-
