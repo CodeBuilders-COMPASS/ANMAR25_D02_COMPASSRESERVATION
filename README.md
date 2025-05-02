@@ -195,3 +195,34 @@ interface Space {
   updatedAt?: Date;
 }
 ```
+# Automatic Default User Creation
+
+A seed script has been added to automatically create a default user in the development environment.
+
+## Default User Credentials
+
+The user is created using environment variables for name, email, and password:
+
+* **Name**: `DEFAULT_USER_NAME`
+* **Email**: `DEFAULT_USER_EMAIL`
+* **Password**: `DEFAULT_USER_PASSWORD`
+
+The password is securely hashed using bcrypt before being saved to the database.
+
+## Environment Variables
+
+Ensure the following environment variables are defined in your `.env` file:
+
+DEFAULT_USER_NAME=YourUserNameDEFAULT_USER_EMAIL=email@example.comDEFAULT_USER_PASSWORD=your_password_here
+## User Creation
+
+The script checks if the user already exists in the database and creates it only if it doesn't. This prevents duplicate user creation.
+
+## Running the Seed Script
+
+To execute the seed script, use the following command:
+
+```bash
+npm run seed
+
+```
