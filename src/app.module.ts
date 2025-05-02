@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { IdCheckMiddleware } from './middlewares/id-check.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SpacesModule } from './spaces/spaces.module';
@@ -12,4 +13,9 @@ import { ReservationModule } from './reservations/reservations.module';
   providers: [AppService, PrismaService],
   exports: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IdCheckMiddleware)
+      .forRoutes('spaces/:id', 'resources/:id', 'reservations/:id');
+  }
+}

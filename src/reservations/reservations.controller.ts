@@ -36,7 +36,7 @@ export class ReservationController {
   }
 
   @Get()
-  async findAll(@Query('page', new PositiveIntPipe()) page = 1) {
+  async findAll(@Query('page') page = 1) {
     return this.reservationService.findAll(page);
   }
   
