@@ -4,6 +4,7 @@ import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 import { SpacesService } from './spaces.service';
 import { ParamId } from '../decorators/param-id.decorator';
+import { AddResourceToSpaceDto } from './dto/add-resource-to-space.dto';
 
 @Controller('spaces')
 export class SpacesController {
@@ -30,5 +31,8 @@ export class SpacesController {
     async deactivate(@ParamId() id: number) {
       return this.spacesService.remove(+id); 
     }
-  
+    @Post(':id/resources')
+    async addResourceToSpace(@ParamId() id: number, @Body()addResourceToSpaceDto: AddResourceToSpaceDto){
+      return this.spacesService.addResource(+id, addResourceToSpaceDto)
+    }
 }
