@@ -1,6 +1,6 @@
-import { IsOptional, IsString, IsInt, IsEnum, Min } from "class-validator";
-import { Type } from "class-transformer";
-import { StatusEnum } from "src/enums/status.enum";
+import { IsOptional, IsString, IsInt, IsEnum, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { StatusEnum } from 'src/enums/status.enum';
 
 export class FilterSpaceDto {
   @IsOptional()

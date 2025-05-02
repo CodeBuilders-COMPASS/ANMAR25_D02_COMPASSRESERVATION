@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateSpaceDto } from "./dto/create-space.dto";
-import { FilterSpaceDto } from "./dto/filter-space.dto";
-import { UpdateSpaceDto } from "./dto/update-space.dto";
-import { StatusEnum } from "../enums/status.enum";
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateSpaceDto } from './dto/create-space.dto';
+import { FilterSpaceDto } from './dto/filter-space.dto';
+import { UpdateSpaceDto } from './dto/update-space.dto';
+import { StatusEnum } from '../enums/status.enum';
 
 @Injectable()
 export class SpacesService {
@@ -19,7 +15,7 @@ export class SpacesService {
     });
 
     if (exists) {
-      throw new BadRequestException("Space with this name already exists.");
+      throw new BadRequestException('Space with this name already exists.');
     }
 
     return this.prisma.space.create({
@@ -36,7 +32,7 @@ export class SpacesService {
     const skip = (page - 1) * limit;
 
     const where = {
-      name: name ? { contains: name, mode: "insensitive" } : undefined,
+      name: name ? { contains: name, mode: 'insensitive' } : undefined,
       capacity: capacity ? { gte: capacity } : undefined,
       status: status ?? undefined,
     };
@@ -47,7 +43,7 @@ export class SpacesService {
         where,
         skip,
         take: limit,
-        orderBy: { created_at: "desc" },
+        orderBy: { created_at: 'desc' },
       }),
     ]);
 
@@ -74,7 +70,7 @@ export class SpacesService {
         where: { name: updateDto.name },
       });
       if (nameExists && nameExists.id !== id) {
-        throw new BadRequestException("Space with this name already exists.");
+        throw new BadRequestException('Space with this name already exists.');
       }
     }
 

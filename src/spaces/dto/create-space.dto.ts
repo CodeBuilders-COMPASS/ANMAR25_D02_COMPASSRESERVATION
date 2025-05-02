@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  NotContains,
-  Length,
-} from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, NotContains, Length } from 'class-validator';
 
 export class CreateSpaceDto {
   @IsNotEmpty()

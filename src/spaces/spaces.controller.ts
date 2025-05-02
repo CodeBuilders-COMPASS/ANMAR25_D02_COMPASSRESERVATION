@@ -8,13 +8,13 @@ import {
   ParseIntPipe,
   Delete,
   Patch,
-} from "@nestjs/common";
-import { FilterSpaceDto } from "./dto/filter-space.dto";
-import { CreateSpaceDto } from "./dto/create-space.dto";
-import { UpdateSpaceDto } from "./dto/update-space.dto";
-import { SpacesService } from "./spaces.service";
+} from '@nestjs/common';
+import { FilterSpaceDto } from './dto/filter-space.dto';
+import { CreateSpaceDto } from './dto/create-space.dto';
+import { UpdateSpaceDto } from './dto/update-space.dto';
+import { SpacesService } from './spaces.service';
 
-@Controller("spaces")
+@Controller('spaces')
 export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
@@ -27,19 +27,16 @@ export class SpacesController {
     return this.spacesService.findAll(filterDto);
   }
 
-  @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.spacesService.findOne(id);
   }
-  @Patch(":id")
-  update(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() updateSpaceDto: UpdateSpaceDto,
-  ) {
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateSpaceDto: UpdateSpaceDto) {
     return this.spacesService.update(id, updateSpaceDto);
   }
-  @Delete(":id/deactivate")
-  async deactivate(@Param("id", ParseIntPipe) id: number) {
+  @Delete(':id/deactivate')
+  async deactivate(@Param('id', ParseIntPipe) id: number) {
     return this.spacesService.remove(+id); // this sets status to INACTIVE
   }
 }
