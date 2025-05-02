@@ -35,4 +35,8 @@ export class SpacesController {
     async addResourceToSpace(@ParamId() id: number, @Body()addResourceToSpaceDto: AddResourceToSpaceDto){
       return this.spacesService.addResource(+id, addResourceToSpaceDto)
     }
+    @Get(':id/resources')
+    async listResourcesForSpace(@ParamId() id: number){
+      return this.spacesService.findResourcesForSpaces(+id)
+    }
 }

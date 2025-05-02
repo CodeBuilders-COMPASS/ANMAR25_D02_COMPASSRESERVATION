@@ -119,6 +119,18 @@ export class SpacesService {
         throw e;
       }
     }
+  }
 
+  async findResourcesForSpaces(id: number){
+    await this.findOne(id);
+    const resourcesOnly = await this.prisma.spaceResource.findMany({
+      where:{
+        space_id: id,
+      },
+      include: {
+        resource: true,
+      },
+    });
+    return resourcesOnly.map(item => item.resource)
   }
 }
