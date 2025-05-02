@@ -8,7 +8,8 @@ import { IdCheckMiddleware } from 'src/middlewares/id-check.middleware';
 @Module({
   imports: [PrismaModule],
   providers: [ResourceService],
-  controllers: [ResourceController]
+  controllers: [ResourceController],
+  exports: [ResourceService]
 })
 export class ResourceModule implements NestModule {
 

@@ -1,13 +1,14 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { FilterSpaceDto } from './dto/filter-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 import { StatusEnum } from '../enums/status.enum';
+import { ResourceService } from 'src/resources/resources.service';
 
 @Injectable()
 export class SpacesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly resourceService: ResourceService) {}
 
   async create(createSpaceDto: CreateSpaceDto) {
     const exists = await this.prisma.space.findUnique({
@@ -98,5 +99,23 @@ export class SpacesService {
         updated_at: new Date(),
       },
     });
+  }
+
+  async addResource(space_id: number, resource_id: number) {
+    await this.findOne(space_id);
+    await this.resourceService.findOne(resource_id);
+    try {
+      return await this.prisma.spaceResource.create({
+        data: {
+          space_id,
+          resource_id,
+        },
+      });
+    } catch(e){
+      if(e.code === 'P2002'){
+        throw new ConflictException('this relationship already exists')
+      }
+    }
+
   }
 }
