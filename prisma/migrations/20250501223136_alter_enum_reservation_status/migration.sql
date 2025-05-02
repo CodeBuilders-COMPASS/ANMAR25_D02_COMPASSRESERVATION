@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `reservations` MODIFY `status` ENUM('OPEN', 'APPROVED', 'CLOSED', 'CANCELLED') NOT NULL DEFAULT 'OPEN';
