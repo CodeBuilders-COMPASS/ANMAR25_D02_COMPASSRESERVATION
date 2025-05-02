@@ -133,4 +133,25 @@ export class SpacesService {
     });
     return resourcesOnly.map(item => item.resource)
   }
+
+  async removeResourceFromSpace(space_id: number, resource_id: number){
+    await this.findOne(space_id)
+    await this.resourceService.findOne(resource_id);
+    try{
+      await this.prisma.spaceResource.delete({
+        where: {
+          space_id_resource_id: {
+            space_id: space_id,
+            resource_id: resource_id,
+          }
+        },
+      });
+    }catch(e){
+      if(e.code === 'P2025'){
+        throw new NotFoundException('this relationship not found');
+      }else{
+        throw e;
+      }
+    }  
+  }
 }

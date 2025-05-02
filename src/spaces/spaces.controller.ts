@@ -39,4 +39,11 @@ export class SpacesController {
     async listResourcesForSpace(@ParamId() id: number){
       return this.spacesService.findResourcesForSpaces(+id)
     }
+    @Delete(':id/resources/:resourceId')
+    async deleteResourcesForSpace(
+      @ParamId() id: number,
+      @Param('resourceId', ParseIntPipe) resourceId: number
+    ) {
+      return this.spacesService.removeResourceFromSpace(+id, resourceId)
+    }
 }
