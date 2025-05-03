@@ -8,11 +8,11 @@ import { SpaceValidationPipe } from 'src/pipes/validate-space.pipe';
 import { ResourceValidationPipe } from 'src/pipes/validate-resources.pipe';
 import { ReservationConflictPipe } from 'src/pipes/check-reservation-conflict.pipe';
 import { ReservationExistsPipe } from 'src/pipes/reservation-exists.pipe';
+import { FilterReservationDto } from './dto/filter-reservation.dto';
 
 @Controller('reservations')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
-
   
   @Post()
   @UsePipes(
@@ -24,7 +24,10 @@ export class ReservationController {
   async create(@Body() data: CreateReservationDto) {
     return this.reservationService.create(data);
   }
-
+  @Get()
+  async findAll(@Query() filterDto: FilterReservationDto) {
+    return this.reservationService.findAll(filterDto);
+  }
   @Patch(':id')
   @UsePipes(
     ClientValidationPipe,
@@ -33,11 +36,6 @@ export class ReservationController {
   )
   async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
-  }
-
-  @Get()
-  async findAll(@Query('page', new PositiveIntPipe()) page = 1) {
-    return this.reservationService.findAll(page);
   }
   
   @Get(':id')
