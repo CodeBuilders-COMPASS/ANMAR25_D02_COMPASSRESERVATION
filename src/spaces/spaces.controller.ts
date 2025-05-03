@@ -19,29 +19,6 @@ import { ParamId } from '../decorators/param-id.decorator';
 export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
-<<<<<<< HEAD
-  @Post()
-  async create(@Body() createSpaceDto: CreateSpaceDto) {
-    return this.spacesService.create(createSpaceDto);
-  }
-  @Get()
-  findAll(@Query() filterDto: FilterSpaceDto) {
-    return this.spacesService.findAll(filterDto);
-  }
-
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.spacesService.findOne(id);
-  }
-  @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateSpaceDto: UpdateSpaceDto) {
-    return this.spacesService.update(id, updateSpaceDto);
-  }
-  @Delete(':id/deactivate')
-  async deactivate(@Param('id', ParseIntPipe) id: number) {
-    return this.spacesService.remove(+id); // this sets status to INACTIVE
-  }
-=======
     @Post()
     async create(@Body() createSpaceDto: CreateSpaceDto) {
         return this.spacesService.create(createSpaceDto);
@@ -64,5 +41,4 @@ export class SpacesController {
       return this.spacesService.remove(+id); 
     }
   
->>>>>>> develop
 }

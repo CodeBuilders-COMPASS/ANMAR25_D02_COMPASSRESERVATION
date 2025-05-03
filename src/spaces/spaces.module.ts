@@ -10,9 +10,6 @@ import path from 'path';
   providers: [SpacesService],
   controllers: [SpacesController],
 })
-<<<<<<< HEAD
-export class SpacesModule {}
-=======
 export class SpacesModule implements NestModule {
 
   configure(consumer: MiddlewareConsumer) {
@@ -22,4 +19,3 @@ export class SpacesModule implements NestModule {
     })
   }
 }
->>>>>>> develop
