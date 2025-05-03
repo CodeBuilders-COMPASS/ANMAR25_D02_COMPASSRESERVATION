@@ -28,6 +28,12 @@ export class ReservationController {
   async findAll(@Query() filterDto: FilterReservationDto) {
     return this.reservationService.findAll(filterDto);
   }
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) reservation
+  ) {
+    return this.reservationService.findOne(reservation);
+  }
   @Patch(':id')
   @UsePipes(
     ClientValidationPipe,
@@ -37,13 +43,6 @@ export class ReservationController {
   async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
   }
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) reservation
-  ) {
-    return this.reservationService.findOne(reservation);
-  }
-
   @Patch(':id/cancel')
   async cancel(
     @Param('id', ParseIntPipe, new PositiveIntPipe()) id: number
