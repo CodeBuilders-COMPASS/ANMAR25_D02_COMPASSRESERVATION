@@ -1,119 +1,150 @@
-# 🚀 Compass Reservation API
+# Compass Reservation API
 
-API RESTful para gerenciamento de reservas de espaços e recursos, desenvolvida com **NestJS**, **Prisma**, **TypeScript**, **MySQL**, e documentação via **Swagger**.
+RESTful API for managing space and resource reservations, developed with **NestJS**, **Prisma**, **TypeScript**, **MySQL**, and documented with **Swagger**.
 
----
+## 📚 Technologies
 
-## 👨‍💻 Equipe CodeBuilders
+- **NestJS** – Backend framework  
+- **TypeScript** – Main language  
+- **Prisma ORM** – Database access and migrations  
+- **MySQL / MariaDB** – Relational database (via XAMPP or Docker)  
+- **Swagger** – Automatic API documentation (`/api`)  
+- **Docker & Docker Compose** – Optional containers for MySQL and services  
+- **Jest + Supertest** – Unit and integration testing  
+- **ESLint & Prettier** – Linter and code formatter  
+- **class-validator / class-transformer** – DTO validations  
+- **JWT (jsonwebtoken) + Passport** – Token-based authentication  
+- **bcrypt** – Password hashing  
 
-Desenvolvido pela equipe **CodeBuilders** como parte da estrutura de backend para o sistema Compass Reservation.
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-- ⚙️ **NestJS** – Framework backend modular
-- 📘 **TypeScript** – Tipagem estática moderna
-- 🧠 **Prisma ORM** – Acesso a banco de dados relacional
-- 🐬 **MySQL** – Banco de dados relacional
-- 🧾 **Swagger** – Documentação automática da API
-- 🔒 **JWT** – Autenticação por token
-- 📏 **Class-validator** – Validações nos DTOs
-- 🐳 **Docker** (estrutura inicial prevista)
-- 🧹 **ESLint + Prettier** – Padronização e qualidade de código
-
----
-
-## 📁 Estrutura de Pastas
+## 📁 Folder Structure
 
 ```
 src/
-├── clients/              # Módulo de clientes
-├── decorators/           # Decorators personalizados
-├── enums/                # Enums globais
-├── middlewares/          # Middlewares de autenticação, etc.
-├── prisma/               # Configuração do Prisma
-├── reservations/         # Módulo de reservas
-├── resources/            # Módulo de recursos
-├── spaces/               # Módulo de espaços
-├── users/                # Módulo de usuários
-├── app.module.ts         # Módulo raiz
-├── app.controller.ts     # Controller raiz
-├── app.service.ts        # Serviço global
-└── main.ts               # Entry point da aplicação
+├── clients/
+├── decorators/
+├── enums/
+├── middlewares/
+├── prisma/
+├── reservations/
+├── resources/
+├── spaces/
+├── users/
+├── app.module.ts
+├── app.controller.ts
+├── app.service.ts
+└── main.ts
 ```
 
----
+## ⚙️ Prerequisites
 
-## ⚙️ Variáveis de Ambiente `.env`
+- Node.js v16+ and npm or pnpm  
+- XAMPP (MySQL/MariaDB) or Docker (to run MySQL via docker-compose)  
 
-Configure seu arquivo `.env` com base no exemplo abaixo:
+## 📦 Using XAMPP
 
-```env
-DATABASE_URL="mysql://root:minhasenha@localhost:3306/ANMAR25_D02_COMPASSRESERVATION"
-JWT_SECRET="sua_chave_jwt"
-JWT_EXPIRES_IN="1d"
-DEFAULT_ADMIN_EMAIL=admin@compass.com
-DEFAULT_ADMIN_PASSWORD=Admin1234
-DEFAULT_ADMIN_NAME=Admin
-```
+1. Start Apache and MySQL in the XAMPP control panel.  
+2. Open phpMyAdmin and create the database `reservation`.  
+3. Verify user/password (default `root` with no password) or adjust in `.env`.  
 
----
-
-## 📦 Instalação e Execução
+## 🐳 Using Docker
 
 ```bash
-# Instalar dependências
-npm install --legacy-peer-deps
-
-# Gerar Prisma Client
-npx prisma generate
-
-# Aplicar migrações
-npx prisma migrate dev --name init
-
-# Iniciar a aplicação
-npm run dev
+# In project root
+docker-compose up -d
 ```
 
----
+The `docker-compose.yml` already sets up a MySQL container on `localhost:3306` with a persistent data volume.
 
-## 📚 Swagger - Documentação Interativa
+## 🚀 Installation and Running
 
-Swagger está configurado no projeto em `src/main.ts`.
+1. Clone the repository and switch to the feature branch:
 
-Após iniciar o servidor, acesse:
+```bash
+git clone <repo-url>
+cd CompassReservation
+git checkout feature/integrate-infra-auth
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Copy environment variables example:
+
+```bash
+cp .env.example .env
+```
+
+4. Edit `.env` with your credentials.
+
+5. Generate Prisma Client and apply migrations:
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+6. Start the application in development mode:
+
+```bash
+npm run start:dev
+```
+
+7. Access Swagger documentation at:
+
 ```
 http://localhost:3000/api
 ```
 
-> Para que os endpoints apareçam corretamente:
-> - Os módulos devem estar importados em `AppModule`
-> - Os controllers devem conter:
->   - `@ApiTags('NomeDoGrupo')`
->   - `@ApiOperation({ summary: 'Descrição' })`
+## 🧪 Tests
 
----
+- **Unit** and **e2e** tests:
 
-## ✅ Status do Projeto
+```bash
+npm run test        # run all tests
+npm run test:e2e    # run end-to-end tests
+```
 
-| Funcionalidade             | Status         |
-|----------------------------|----------------|
-| Estrutura NestJS           | ✅ Finalizado  |
-| Banco MySQL conectado      | ✅ Operacional |
-| Prisma configurado         | ✅ Pronto      |
-| Swagger habilitado         | ✅ Ativo       |
-| CRUDs integrados           | 🚧 Em andamento|
-| Autenticação JWT           | 🚧 Em breve    |
+## 🛠️ Linters & Formatting
 
----
+- **ESLint**:
 
-## 📌 Observações
+```bash
+npm run lint
+npm run lint:fix
+```
 
-- Branch de integração atual: `feature/integrate-infra-auth`
-- Em caso de erro `.git/index.lock`, feche o VS Code e remova o arquivo manualmente
-- Evite usar OneDrive como workspace principal (pode gerar problemas de permissões com arquivos removidos)
+- **Prettier**:
 
----
+```bash
+npm run format
+```
 
-> Documento atualizado por **CodeBuilders** – versão em desenvolvimento contínuo 💻✨
+## 🚦 Project Status
+
+| Module                             | Status              |
+|------------------------------------|---------------------|
+| NestJS infrastructure              | ✅                  |
+| MySQL connection                   | ✅                  |
+| Prisma & Migrations                | ✅                  |
+| Swagger                            | ✅                  |
+| User CRUD                          | 🚧 In progress      |
+| Client CRUD                        | 🚧 In progress      |
+| Space CRUD                         | 🚧 In progress      |
+| Resource CRUD                      | 🚧 In progress      |
+| Reservation CRUD                   | 🚧 In progress      |
+| Authentication (JWT)               | 🚧 Upcoming         |
+| Seed initial admin                 | 🚧 Upcoming         |
+| Testing (Jest + Supertest)         | 🚧 Partial coverage |
+| Continuous Integration (CI)        | 🚧 Not configured   |
+
+## 📌 Notes
+
+- Keep `.env` secure and ignored by Git (`.gitignore`).  
+- If lock file conflicts occur (e.g. `.git/index.lock`), stop editors and remove manually.  
+- Use `.env.example` as reference, but ensure it stays updated.  
+- When running via Docker, check the MySQL/MariaDB version in `docker-compose.yml`.  
+
+**CodeBuilders Team © 2025**
