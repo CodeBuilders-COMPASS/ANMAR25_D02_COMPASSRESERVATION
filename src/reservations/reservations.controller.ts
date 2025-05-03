@@ -37,7 +37,6 @@ export class ReservationController {
   async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
   }
-  
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) reservation
