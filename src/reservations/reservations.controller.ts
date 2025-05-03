@@ -43,7 +43,7 @@ export class ReservationController {
   async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
     return this.reservationService.update(id, dto);
   }
-  @Patch(':id/cancel')
+  @Delete(':id/cancel')
   async cancel(
     @Param('id', ParseIntPipe, new PositiveIntPipe()) id: number
   ) {
