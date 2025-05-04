@@ -3,7 +3,8 @@ import { ResourceService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { FilterResourceDto } from './dto/filter-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
-import { ParamId } from '../decorators/param-id.decorator';
+import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
+import { ResourceExistsPipe } from 'src/pipes/resource-exists.pipe';
 
 
 @Controller('resources')
@@ -20,16 +21,19 @@ export class ResourceController {
     }
 
     @Get(':id')
-    findOne(@ParamId() id: number) {
+    findOne(@Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number) {
         return this.resourceService.findOne(id);
     }
     @Patch(':id')
-    update(@ParamId() id: number, @Body() updateResourceDto: UpdateResourceDto) {
+    update(
+      @Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number, 
+      @Body() updateResourceDto: UpdateResourceDto
+    ) {
         return this.resourceService.update(id, updateResourceDto);
     }
     @Delete(':id/deactivate')
-    async deactivate(@ParamId() id: number) {
-        return this.resourceService.remove(+id);
+    async deactivate(@Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number) {
+        return this.resourceService.remove(id);
     }
 
 }
