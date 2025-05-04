@@ -3,12 +3,9 @@ import { SpacesService } from './spaces.service';
 import { SpacesController } from './spaces.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { IdCheckMiddleware } from '../middlewares/id-check.middleware';
-import path from 'path';
-import { ResourceModule } from 'src/resources/resources.module';
-
 
 @Module({
-  imports: [PrismaModule, ResourceModule],
+  imports: [PrismaModule],
   providers: [SpacesService],
   controllers: [SpacesController]
 })

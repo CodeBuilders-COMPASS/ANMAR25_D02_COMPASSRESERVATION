@@ -4,12 +4,10 @@ import { CreateSpaceDto } from './dto/create-space.dto';
 import { FilterSpaceDto } from './dto/filter-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 import { StatusEnum } from '../enums/status.enum';
-import { ResourceService } from 'src/resources/resources.service';
-import { AddResourceToSpaceDto } from './dto/add-resource-to-space.dto';
 
 @Injectable()
 export class SpacesService {
-  constructor(private readonly prisma: PrismaService, private readonly resourceService: ResourceService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createSpaceDto: CreateSpaceDto) {
     const exists = await this.prisma.space.findUnique({
@@ -100,58 +98,5 @@ export class SpacesService {
         updated_at: new Date(),
       },
     });
-  }
-
-  async addResource(space_id: number, addResourceToSpaceDto: AddResourceToSpaceDto) {
-    await this.findOne(space_id);
-    await this.resourceService.findOne(addResourceToSpaceDto.resource_id);
-    try {
-      return await this.prisma.spaceResource.create({
-        data: {
-          space_id,
-          resource_id: addResourceToSpaceDto.resource_id,
-        },
-      });
-    } catch(e){
-      if(e.code === 'P2002'){
-        throw new ConflictException('this relationship already exists');
-      }else{
-        throw e;
-      }
-    }
-  }
-
-  async findResourcesForSpaces(id: number){
-    await this.findOne(id);
-    const resourcesOnly = await this.prisma.spaceResource.findMany({
-      where:{
-        space_id: id,
-      },
-      include: {
-        resource: true,
-      },
-    });
-    return resourcesOnly.map(item => item.resource)
-  }
-
-  async removeResourceFromSpace(space_id: number, resource_id: number){
-    await this.findOne(space_id)
-    await this.resourceService.findOne(resource_id);
-    try{
-      await this.prisma.spaceResource.delete({
-        where: {
-          space_id_resource_id: {
-            space_id: space_id,
-            resource_id: resource_id,
-          }
-        },
-      });
-    }catch(e){
-      if(e.code === 'P2025'){
-        throw new NotFoundException('this relationship not found');
-      }else{
-        throw e;
-      }
-    }  
   }
 }
