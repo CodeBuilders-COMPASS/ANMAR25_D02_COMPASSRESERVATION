@@ -1,5 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class ResourceValidationPipe implements PipeTransform {
@@ -11,7 +12,7 @@ export class ResourceValidationPipe implements PipeTransform {
         where: { id: res.resource_id },
       });
 
-      if (!resource || resource.status !== 'ACTIVE') {
+      if (!resource || resource.status !== StatusEnum.ACTIVE) {
         throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
       }
       if (resource.quantity < res.quantity) {

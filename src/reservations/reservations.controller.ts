@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, Query, ParseIntPipe, Patch, ValidationPipe, BadRequestException, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Query, ParseIntPipe, Patch, UsePipes } from '@nestjs/common';
 import { ReservationService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -21,8 +21,8 @@ export class ReservationController {
     ResourceValidationPipe,
     ReservationConflictPipe
   )
-  async create(@Body() data: CreateReservationDto) {
-    return this.reservationService.create(data);
+  async create(@Body() createReservationDto: CreateReservationDto) {
+    return this.reservationService.create(createReservationDto);
   }
   @Get()
   async findAll(@Query() filterDto: FilterReservationDto) {
@@ -30,9 +30,9 @@ export class ReservationController {
   }
   @Get(':id')
   async findOne(
-    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) reservation
+    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) id: number
   ) {
-    return this.reservationService.findOne(reservation);
+    return this.reservationService.findOne(id);
   }
   @Patch(':id')
   @UsePipes(
@@ -40,12 +40,15 @@ export class ReservationController {
     SpaceValidationPipe,
     ResourceValidationPipe
   )
-  async update(@Param('id') id: number, @Body() dto: UpdateReservationDto) {
-    return this.reservationService.update(id, dto);
+  async update(
+    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) id: number, 
+    @Body() updateReservationDto: UpdateReservationDto
+  ) {
+    return this.reservationService.update(id, updateReservationDto);
   }
   @Delete(':id/cancel')
   async cancel(
-    @Param('id', ParseIntPipe, new PositiveIntPipe()) id: number
+    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe)  id: number
   ) {
     return this.reservationService.cancel(id);
   }

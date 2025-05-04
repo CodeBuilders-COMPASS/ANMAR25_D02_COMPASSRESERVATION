@@ -6,6 +6,7 @@ import { ReservationStatus } from 'src/enums/reservationStatus.enum';
 import { FilterReservationDto } from './dto/filter-reservation.dto';
 import { equals } from 'class-validator';
 import { Prisma } from '@prisma/client';
+import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class ReservationService {
@@ -107,59 +108,86 @@ export class ReservationService {
     };
   }
 
-  async update(id: number, dto: UpdateReservationDto) {
-      const reservation = await this.prisma.reservation.findUnique({
+  async findOne(id: number) {
+    const reservation = await this.prisma.reservation.findUnique({
       where: { id },
       include: {
-          reservationResources: true,
+        client: true,
+        space: true,
+        reservationResources: {
+          include: { resource: true },
+        },
       },
-      });
-  
-      if (!reservation) {
-      throw new BadRequestException('Reservation not found');
-      }
-  
-      if (reservation.status !== 'OPEN') {
-      throw new BadRequestException('Only reservations with status OPEN can be updated');
-      }
-  
-      
-      if (dto.resources && dto.resources.length > 0) {
-      
-      await this.prisma.reservationResource.deleteMany({
-          where: { reservation_id: id },
-      });
-  
-      
-      await this.prisma.reservationResource.createMany({
-          data: dto.resources.map((r) => ({
-          reservation_id: id,
-          resource_id: r.resource_id,
-          quantity: r.quantity,
-          })),
-      });
-      }
-  
-      const dataToUpdate: any = {
-      ...(dto.client_id && { client_id: dto.client_id }),
-      ...(dto.space_id && { space_id: dto.space_id }),
-      ...(dto.start_date && { start_date: new Date(dto.start_date) }),
-      ...(dto.end_date && { end_date: new Date(dto.end_date) }),
-      ...(dto.status && { status: dto.status }),
-      };
-  
-      const updatedReservation = await this.prisma.reservation.update({
-      where: { id },
-      data: dataToUpdate,
-      });
-  
-      return updatedReservation;
-  }
+    });
+    if (!reservation) {
+      throw new NotFoundException(`Reservation with ID ${id} not found.`);
+    }
+    if (reservation.status !== ReservationStatus.OPEN) {
+      throw new BadRequestException('Only reservations with status OPEN can be viewed');
+    }
 
-  async findOne(reservation: any) {
-      return reservation;
+    if (!reservation.client || reservation.client.status !== StatusEnum.ACTIVE) {
+      throw new BadRequestException('Client is inactive or does not exist');
+    }
+
+    if (!reservation.space || reservation.space.status !== StatusEnum.ACTIVE) {
+      throw new BadRequestException('Space is inactive or does not exist');
+    }
+
+    for (const res of reservation.reservationResources) {
+      if (!res.resource || res.resource.status !== StatusEnum.ACTIVE) {
+        throw new BadRequestException(`Resource ID ${res.resource_id} is inactive or does not exist`);
+      }
+    }
+    return reservation;
   }
   
+  async update(id: number, updateReservationDto: UpdateReservationDto) {
+    const reservation = await this.prisma.reservation.findUnique({
+    where: { id },
+    include: {
+        reservationResources: true,
+    },
+    });
+
+    if (!reservation) {
+    throw new NotFoundException('Reservation not found');
+    }
+
+    if (reservation.status !== ReservationStatus.OPEN) {
+    throw new BadRequestException('Only reservations with status OPEN can be updated');
+    }
+    
+    if (updateReservationDto.resources && updateReservationDto.resources.length > 0) {
+    
+    await this.prisma.reservationResource.deleteMany({
+        where: { reservation_id: id },
+    });
+
+    await this.prisma.reservationResource.createMany({
+        data: updateReservationDto.resources.map((r) => ({
+        reservation_id: id,
+        resource_id: r.resource_id,
+        quantity: r.quantity,
+        })),
+    });
+    }
+
+    const dataToUpdate: any = {
+    ...(updateReservationDto.client_id && { client_id: updateReservationDto.client_id }),
+    ...(updateReservationDto.space_id && { space_id: updateReservationDto.space_id }),
+    ...(updateReservationDto.start_date && { start_date: new Date(updateReservationDto.start_date) }),
+    ...(updateReservationDto.end_date && { end_date: new Date(updateReservationDto.end_date) }),
+    ...(updateReservationDto.status && { status: updateReservationDto.status }),
+    };
+
+    const updatedReservation = await this.prisma.reservation.update({
+    where: { id },
+    data: dataToUpdate,
+    });
+
+    return updatedReservation;
+}
 
   async cancel(id: number) {
       const reservation = await this.prisma.reservation.findUnique({
@@ -170,18 +198,18 @@ export class ReservationService {
         throw new NotFoundException('Reservation not found');
       }
   
-      if (reservation.status !== 'OPEN') {
+      if (reservation.status !== ReservationStatus.OPEN) {
         throw new BadRequestException('Only reservations with status OPEN can be cancelled');
       }
   
-      const updatedReservation = await this.prisma.reservation.update({
+      const cancelledReservation = await this.prisma.reservation.update({
         where: { id },
         data: {
-          status: 'CANCELLED',
+          status: ReservationStatus.CANCELLED,
           updated_at: new Date(),
         },
       });
   
-      return updatedReservation;
+      return cancelledReservation;
   }
 }

@@ -1,5 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class ClientValidationPipe implements PipeTransform {
@@ -14,7 +15,7 @@ export class ClientValidationPipe implements PipeTransform {
       where: { id: value.client_id },
     });
 
-    if (!client || client.status !== 'ACTIVE') {
+    if (!client || client.status !== StatusEnum.ACTIVE) {
       throw new BadRequestException('Inactive or nonexistent client');
     }
 
