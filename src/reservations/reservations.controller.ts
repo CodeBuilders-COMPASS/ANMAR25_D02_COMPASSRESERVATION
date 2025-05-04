@@ -40,12 +40,13 @@ export class ReservationController {
     SpaceValidationPipe,
     ResourceValidationPipe
   )
+
   async update(
     @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) id: number, 
-    @Body() updateReservationDto: UpdateReservationDto
-  ) {
+    @Body() updateReservationDto: UpdateReservationDto){
     return this.reservationService.update(id, updateReservationDto);
   }
+
   @Delete(':id/cancel')
   async cancel(
     @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe)  id: number
