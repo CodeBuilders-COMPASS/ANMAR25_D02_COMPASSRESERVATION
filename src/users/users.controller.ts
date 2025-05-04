@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 //import { JwtAuthGuard } from '../auth/jwt.guard';
-import { ParamId } from '../decorators/param-id.decorator';
+import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
+import { UserExistsPipe } from 'src/pipes/user-exists.pipe';
 
 
 @Controller('users')
@@ -22,17 +23,17 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@ParamId('id') id: number) {
+  findOne(@Param('id', ParseIntPipe, PositiveIntPipe, UserExistsPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  update(@ParamId('id') id: number, @Body() data: UpdateUserDto) {
+  update(@Param('id', ParseIntPipe, PositiveIntPipe, UserExistsPipe) id: number, @Body() data: UpdateUserDto) {
     return this.usersService.update(id, data);
   }
 
   @Delete(':id')
-  remove(@ParamId('id') id: number) {
+  remove(@Param('id', ParseIntPipe, PositiveIntPipe, UserExistsPipe) id: number) {
     return this.usersService.remove(id);
   }
 }
