@@ -2,15 +2,15 @@ import { PipeTransform, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class ReservationExistsPipe implements PipeTransform {
+export class UserExistsPipe implements PipeTransform {
   constructor(private readonly prisma: PrismaService) {}
 
   async transform(id: number) {
-    const reservation = await this.prisma.reservation.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
-    if (!reservation) {
-      throw new NotFoundException('Reservation not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
     return id;
   }

@@ -1,5 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class SpaceValidationPipe implements PipeTransform {
@@ -10,7 +11,7 @@ export class SpaceValidationPipe implements PipeTransform {
       where: { id: value.space_id },
     });
 
-    if (!space || space.status !== 'ACTIVE') {
+    if (!space || space.status !== StatusEnum.ACTIVE) {
       throw new BadRequestException('Inactive or nonexistent space');
     }
 

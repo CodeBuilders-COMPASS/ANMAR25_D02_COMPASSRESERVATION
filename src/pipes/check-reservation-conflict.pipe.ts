@@ -1,5 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ReservationStatus } from 'src/enums/reservationStatus.enum';
 
 @Injectable()
 export class ReservationConflictPipe implements PipeTransform {
@@ -11,7 +12,7 @@ export class ReservationConflictPipe implements PipeTransform {
     const conflict = await this.prisma.reservation.findFirst({
       where: {
         space_id,
-        status: { notIn: ['CANCELLED'] },
+        status: { notIn: [ReservationStatus.CANCELLED] },
         OR: [
           {
             start_date: { lte: new Date(end_date) },

@@ -1,7 +1,5 @@
 import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
-import { StatusEnum } from 'src/enums/status.enum';
-
-
+import { ReservationStatus } from '@prisma/client';
 
 export class UpdateReservationDto {
   @IsOptional()
@@ -23,6 +21,7 @@ export class UpdateReservationDto {
   @IsDateString()
   @IsNotEmpty()
   end_date?: string; 
+
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
@@ -33,5 +32,5 @@ export class UpdateReservationDto {
 
   @IsOptional()
   @IsNotEmpty()
-  status?: StatusEnum;
+  status?: ReservationStatus;
 }
