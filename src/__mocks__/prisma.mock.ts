@@ -15,4 +15,11 @@ export const prismaMock = {
     delete: jest.fn(),
     count: jest.fn(), 
   },
+  client:  {
+    create: jest.fn(),
+    update: jest.fn(),
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    deactivate: jest.fn(),
+  },
 };
