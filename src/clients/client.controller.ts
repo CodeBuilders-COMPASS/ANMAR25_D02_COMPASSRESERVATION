@@ -64,6 +64,12 @@ export class ClientController {
     );
     }
 
+    @Get(':id')
+    async findOne(@Param('id', PositiveIntPipe) id: number) {
+    return this.clientService.findById(id);
+    }
+
+    
 }
 
  

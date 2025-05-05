@@ -139,6 +139,18 @@ export class ClientService {
     };
   }
   
+  async findById(id: number): Promise<any> {
+    const client = await this.prisma.client.findUnique({
+      where: { id },
+    });
+  
+    if (!client) {
+      throw new NotFoundException(`Client with ID ${id} not found`);
+    }
+  
+    return client;
+  }
+  
   
 }
 
