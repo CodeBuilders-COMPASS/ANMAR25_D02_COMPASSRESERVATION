@@ -62,7 +62,6 @@ The `docker-compose.yml` already sets up a MySQL container on `localhost:3306` w
 ```bash
 git clone <repo-url>
 cd CompassReservation
-git checkout feature/integrate-infra-auth
 ```
 
 2. Install dependencies:
@@ -89,7 +88,7 @@ npx prisma migrate dev --name init
 6. Start the application in development mode:
 
 ```bash
-npm run start:dev
+npm run dev
 ```
 
 7. Access Swagger documentation at:
@@ -122,29 +121,42 @@ npm run lint:fix
 npm run format
 ```
 
-## 🚦 Project Status
+## 📝 Reservation Endpoint Description
 
-| Module                             | Status              |
-|------------------------------------|---------------------|
-| NestJS infrastructure              | ✅                  |
-| MySQL connection                   | ✅                  |
-| Prisma & Migrations                | ✅                  |
-| Swagger                            | ✅                  |
-| User CRUD                          | 🚧 In progress      |
-| Client CRUD                        | 🚧 In progress      |
-| Space CRUD                         | 🚧 In progress      |
-| Resource CRUD                      | 🚧 In progress      |
-| Reservation CRUD                   | 🚧 In progress      |
-| Authentication (JWT)               | 🚧 Upcoming         |
-| Seed initial admin                 | 🚧 Upcoming         |
-| Testing (Jest + Supertest)         | 🚧 Partial coverage |
-| Continuous Integration (CI)        | 🚧 Not configured   |
+The `ReservationService` handles the business logic for managing reservations of spaces and resources. It interacts with a database via Prisma ORM and performs operations like creation, updating, retrieval, and cancellation. Highlights:
+
+### 1. `create(data: CreateReservationDto)`
+- Validates client, space, and requested resources (availability and stock).
+- Checks for scheduling conflicts.
+- Creates reservation and resource relationships.
+- Decrements resource quantities.
+
+### 2. `update(id: number, dto: UpdateReservationDto)`
+- Ensures reservation exists and is `OPEN`.
+- Validates client, space, and new resources.
+- Deletes old resources and associates new ones.
+- Updates reservation details.
+
+### 3. `findAll(page: number = 1)`
+- Paginates and returns all reservations with metadata.
+
+### 4. `findOne(id: number)`
+- Validates reservation exists and is `OPEN`.
+- Ensures all associated data (client, space, resources) are active.
+
+### 5. `cancel(id: number)`
+- Cancels reservation only if `OPEN`.
+- Marks reservation as `CANCELLED` and records timestamp.
+
+## 🌱 Seed Script
+
+- Seeds initial admin and example data for development.
 
 ## 📌 Notes
 
-- Keep `.env` secure and ignored by Git (`.gitignore`).  
-- If lock file conflicts occur (e.g. `.git/index.lock`), stop editors and remove manually.  
-- Use `.env.example` as reference, but ensure it stays updated.  
-- When running via Docker, check the MySQL/MariaDB version in `docker-compose.yml`.  
+- Keep `.env` secure and in `.gitignore`.
+- Use `.env.example` for reference.
+- Resolve `.git/index.lock` issues manually if needed.
+- Check Docker MySQL version compatibility if used.
 
 **CodeBuilders Team © 2025**
