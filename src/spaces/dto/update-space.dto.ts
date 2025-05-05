@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, IsArray, IsNotEmpty } from 'class-validator';
 
 export class UpdateSpaceDto {
   @IsOptional()
@@ -13,4 +13,11 @@ export class UpdateSpaceDto {
   @IsInt()
   @Min(1)
   capacity?: number;
+
+  @IsOptional()
+  @IsArray()
+  resources?: Array<{
+    resource_id: number;
+  }>;
+
 }
