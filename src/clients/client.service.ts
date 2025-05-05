@@ -104,11 +104,11 @@ export class ClientService {
     const where: any = {};
     
     if (filters.email) {
-      where.email = { contains: filters.email, mode: 'insensitive' };
+      where.email = { contains: filters.email };
     }
     
     if (filters.name) {
-      where.name = { contains: filters.name, mode: 'insensitive' };
+      where.name = { contains: filters.name };
     }
     
     if (filters.cpf) {
