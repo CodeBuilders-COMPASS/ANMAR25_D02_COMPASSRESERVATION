@@ -1,6 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { SpacesController } from '../spaces.controller';
 import { SpacesService } from '../spaces.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { SpaceExistsPipe } from '../../pipes/space-exists.pipe';
+import { prismaMock } from '../../__mocks__/prisma.mock';
 
 describe('SpacesController', () => {
   let controller: SpacesController;
@@ -10,15 +13,15 @@ describe('SpacesController', () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [SpacesController],
       providers: [
+        SpacesService,
         {
-          provide: SpacesService,
-          useValue: {
-            create: jest.fn(),
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
-          },
+          provide: PrismaService,
+          useValue: prismaMock,
+        },
+        {
+          provide: SpaceExistsPipe,
+          useFactory: (prisma: PrismaService) => new SpaceExistsPipe(prisma),
+          inject: [PrismaService],
         },
       ],
     }).compile();
@@ -29,5 +32,6 @@ describe('SpacesController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 });

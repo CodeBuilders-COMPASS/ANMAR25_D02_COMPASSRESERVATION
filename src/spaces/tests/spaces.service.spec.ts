@@ -4,12 +4,15 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { prismaMock } from '../../__mocks__/prisma.mock';
 import { StatusEnum } from '../../enums/status.enum';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { SpacesController } from '../spaces.controller';
 
 describe('SpacesService', () => {
   let service: SpacesService;
+  let controller: SpacesController;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      controllers: [SpacesController],
       providers: [
         SpacesService,
         { provide: PrismaService, useValue: prismaMock },
@@ -17,6 +20,7 @@ describe('SpacesService', () => {
     }).compile();
 
     service = moduleRef.get<SpacesService>(SpacesService);
+    controller = moduleRef.get<SpacesController>(SpacesController);
   });
 
   afterEach(() => {
