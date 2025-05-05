@@ -1,5 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, NotContains, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, NotContains, Length, IsInt, IsArray, ValidateNested } from 'class-validator';
 
+class SpaceResource {
+  @IsInt()
+  resource_id: number;
+}
 export class CreateSpaceDto {
 
   @IsNotEmpty()
@@ -13,4 +18,9 @@ export class CreateSpaceDto {
   @IsNotEmpty()
   @IsNumber()
   capacity: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SpaceResource)
+  resources: SpaceResource[];
 }

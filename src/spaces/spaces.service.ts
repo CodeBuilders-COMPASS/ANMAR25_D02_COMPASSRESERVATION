@@ -17,11 +17,18 @@ export class SpacesService {
     if (exists) {
       throw new BadRequestException('Space with this name already exists.');
     }
-
+    const { name, description, capacity, resources } = createSpaceDto;
     return this.prisma.space.create({
       data: {
-        ...createSpaceDto,
-        status: StatusEnum.ACTIVE
+        name,
+        description,
+        capacity,
+        status: StatusEnum.ACTIVE,
+        spaceResources: {
+          create: resources.map(r=> ({
+            resource_id: r.resource_id,
+          })),
+        },
       },
     });
   }
@@ -50,6 +57,13 @@ export class SpacesService {
         skip,
         take: limit,
         orderBy: { created_at: 'desc' },
+        include: {
+          spaceResources: {
+            include: {
+              resource: true,
+            },
+          },
+        },
       }),
     ]);
 
@@ -61,7 +75,16 @@ export class SpacesService {
   }
 
   async findOne(id: number) {
-    const space = await this.prisma.space.findUnique({ where: { id } });
+    const space = await this.prisma.space.findUnique({ 
+      where: { id },
+      include: {
+        spaceResources: {
+          include: {
+            resource: true,
+          },
+        },
+      },
+    });
     if (!space) {
       throw new NotFoundException(`Space with ID ${id} not found.`);
     }
@@ -79,11 +102,26 @@ export class SpacesService {
         throw new BadRequestException('Space with this name already exists.');
       }
     }
+    
+    if(updateDto.resources && updateDto.resources.length > 0){
+      await this.prisma.spaceResource.deleteMany({
+        where: { space_id: id },
+      });
 
+      await this.prisma.spaceResource.createMany({
+        data: updateDto.resources.map((r)=> ({
+          space_id: id,
+          resource_id: r.resource_id,
+        })),
+      });
+    }
+    
     return this.prisma.space.update({
       where: { id },
       data: {
-        ...updateDto,
+        name: updateDto.name,
+        description: updateDto.description,
+        capacity: updateDto.capacity, 
         updated_at: new Date(),
       },
     });
