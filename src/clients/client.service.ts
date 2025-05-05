@@ -18,25 +18,21 @@ export class ClientService {
       },
     });
   
-    
     const existingCpf = await this.prisma.client.findFirst({
       where: {
         cpf: dto.cpf,
         status: StatusEnum.ACTIVE,
       },
     });
-  
     
     if (existingEmail) {
       throw new BadRequestException(`Email '${dto.email}' is already in use by an active client.`);
     }
   
-    
     if (existingCpf) {
       throw new BadRequestException(`CPF '${dto.cpf}' is already in use by an active client.`);
     }
   
-   
     return this.prisma.client.create({
       data: {
         ...dto,
@@ -45,65 +41,27 @@ export class ClientService {
     });
   }
   
-
-  async update(id: number, dto: UpdateClientDto) {
-    const client = await this.prisma.client.findUnique({ where: { id } });
-    if (!client) {
-      throw new NotFoundException('Client not found');
-    }
-
-    return this.prisma.client.update({
-      where: { id },
-      data: {
-        ...dto,
-      },
-    });
-  }
-
-  async findAll({ email, name, cpf, status, page, limit }) {
-    const where = {
-      ...(email && { email: { contains: email } }),
-      ...(name && { name: { contains: name } }),
-      ...(cpf && { cpf: { contains: cpf } }),
-      ...(status && { status }),
-    };
-
-    return this.prisma.client.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: +limit,
-    });
-  }
-
-  async findOne(id: number) {
-    const client = await this.prisma.client.findUnique({ where: { id } });
-    if (!client) throw new NotFoundException('Client not found');
-    return client;
-  }
-
-  async inactivate(id: number) {
-    const client = await this.prisma.client.findUnique({
-      where: { id },
-      include: {
-        reservations: {
-          where: {
-            status: { in: [ReservationStatus.OPEN, ReservationStatus.APPROVED] },
-          },
+  async update(id: number, dto: UpdateClientDto): Promise<any> {
+    try {
+      const updatedClient = await this.prisma.client.update({
+        where: { id },
+        data: {
+          ...(dto.name && { name: dto.name }),
+          ...(dto.cpf && { cpf: dto.cpf }),
+          ...(dto.birth_date && { birth_date: dto.birth_date }),
+          ...(dto.email && { email: dto.email }),
+          ...(dto.phone && { phone: dto.phone }),
+          updatedAt: new Date(),
         },
-      },
-    });
-
-    if (!client) throw new NotFoundException('Client not found');
-
-    if (client.reservations.length > 0) {
-      throw new BadRequestException('Client has open or approved reservations');
+      });
+      return updatedClient;
+    } catch (error) {
+      throw new BadRequestException(`Error updating client: ${error.message}`);
     }
-
-    return this.prisma.client.update({
-      where: { id },
-      data: {
-        status: StatusEnum.INACTIVE,
-      },
-    });
   }
+
+  
 }
+
+
+
