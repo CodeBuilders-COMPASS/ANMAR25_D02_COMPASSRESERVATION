@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, Query, Patch, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Query, Patch, UsePipes, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -9,8 +9,10 @@ import { ResourceValidationPipe } from 'src/pipes/validate-resources.pipe';
 import { ReservationConflictPipe } from 'src/pipes/check-reservation-conflict.pipe';
 import { ReservationExistsPipe } from 'src/pipes/reservation-exists.pipe';
 import { FilterReservationDto } from './dto/filter-reservation.dto';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @Controller('reservations')
+@UseGuards(JwtAuthGuard)
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
   

@@ -1,13 +1,15 @@
-import { Controller, Post, Body, Get, Param, Query, Delete, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Delete, Patch, UseGuards } from '@nestjs/common';
 import { ResourceService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { FilterResourceDto } from './dto/filter-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { ResourceExistsPipe } from 'src/pipes/resource-exists.pipe';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 
 @Controller('resources')
+@UseGuards(JwtAuthGuard)
 export class ResourceController {
     constructor(private readonly resourceService: ResourceService) { }
 

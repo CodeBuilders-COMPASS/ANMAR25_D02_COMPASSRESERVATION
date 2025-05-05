@@ -2,14 +2,14 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } f
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-//import { JwtAuthGuard } from '../auth/jwt.guard';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { UserExistsPipe } from 'src/pipes/user-exists.pipe';
 
 
 
 @Controller('users')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
