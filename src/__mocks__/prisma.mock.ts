@@ -22,4 +22,10 @@ export const prismaMock = {
     findById: jest.fn(),
     deactivate: jest.fn(),
   },
+  user: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+  },
 };
