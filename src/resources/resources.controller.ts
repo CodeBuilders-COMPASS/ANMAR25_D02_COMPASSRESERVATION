@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Query, ParseIntPipe, Delete, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Delete, Patch } from '@nestjs/common';
 import { ResourceService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { FilterResourceDto } from './dto/filter-resource.dto';
@@ -21,18 +21,18 @@ export class ResourceController {
     }
 
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number) {
+    findOne(@Param('id', PositiveIntPipe, ResourceExistsPipe) id: number) {
         return this.resourceService.findOne(id);
     }
     @Patch(':id')
     update(
-      @Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number, 
+      @Param('id', PositiveIntPipe, ResourceExistsPipe) id: number, 
       @Body() updateResourceDto: UpdateResourceDto
     ) {
         return this.resourceService.update(id, updateResourceDto);
     }
     @Delete(':id/deactivate')
-    async deactivate(@Param('id', ParseIntPipe, PositiveIntPipe, ResourceExistsPipe) id: number) {
+    async deactivate(@Param('id', PositiveIntPipe, ResourceExistsPipe) id: number) {
         return this.resourceService.remove(id);
     }
 
