@@ -1,8 +1,5 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { create } from "domain";
+import { Param, ParseIntPipe } from '@nestjs/common';
 
-export const ParamId = createParamDecorator((_data: unknown, context: ExecutionContext) => {
+export const ParamId = (param: string = 'id') => Param(param, ParseIntPipe);
 
-    return Number(context.switchToHttp().getRequest().params.id);
 
-});
