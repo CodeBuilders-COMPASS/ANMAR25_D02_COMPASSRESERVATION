@@ -48,11 +48,6 @@ export class ReservationService {
 
   async findAll(filterDto: FilterReservationDto) {
     const {
-      user_id,
-      client_id,
-      space_id,
-      start_date,
-      end_date,
       status,
       page = 1,
       limit = 10,
@@ -60,26 +55,8 @@ export class ReservationService {
 
     const skip = (page - 1) * limit;
 
-    let dateConditions: Prisma.ReservationWhereInput = {}
-
-    if(start_date && end_date){
-      dateConditions = {
-        AND: [
-          { start_date: { lt: end_date } },
-          { end_date: { gt: start_date } },
-        ],
-      };
-    } else if (start_date) {
-        dateConditions = { start_date: { gte: start_date } }
-    } else if (end_date) {
-        dateConditions = { end_date: { lte: end_date } }
-    }
     const where = {
-      user_id: user_id ?? undefined,
-      client_id: client_id ?? undefined,
-      space_id: space_id ?? undefined,
       status: status ?? undefined,
-      ...dateConditions,
     };
 
     const [count, data] = await Promise.all([
