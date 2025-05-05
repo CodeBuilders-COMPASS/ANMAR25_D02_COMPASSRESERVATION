@@ -28,7 +28,6 @@ export class ResourceService {
     async findAll(filterDto: FilterResourceDto) {
         const {
             name,
-            quantity,
             status,
             page = 1,
             limit = 10,
@@ -38,7 +37,6 @@ export class ResourceService {
 
         const where = {
             name: name ? { contains: name } : undefined,
-            quantity: quantity ? { gte: quantity } : undefined,
             status: status ?? undefined,
         };
 
