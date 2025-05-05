@@ -150,6 +150,42 @@ export class ClientService {
   
     return client;
   }
+
+  async deactivate(id: number): Promise<any> {
+    const client = await this.prisma.client.findUnique({
+      where: { id },
+      include: {
+        reservations: {
+          where: {
+            status: {
+              in: ['OPEN', 'APPROVED'],
+            },
+          },
+        },
+      },
+    });
+  
+    if (!client) {
+      throw new NotFoundException(`Client with ID ${id} not found`);
+    }
+  
+    if (client.reservations.length > 0) {
+      throw new BadRequestException(
+        'Cannot deactivate a client with open or approved reservations',
+      );
+    }
+  
+    const updatedClient = await this.prisma.client.update({
+      where: { id },
+      data: {
+        status: StatusEnum.INACTIVE,
+        updated_at: new Date(),
+      },
+    });
+  
+    return updatedClient;
+  }
+  
   
   
 }

@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -69,7 +70,13 @@ export class ClientController {
     return this.clientService.findById(id);
     }
 
-    
+    @Delete(':id/deactivate')
+    async deactivate(
+    @Param('id', PositiveIntPipe, ClientExistsPipe) id: number,
+    ) {
+    return this.clientService.deactivate(id);
+    }
+
 }
 
  
