@@ -4,7 +4,8 @@ import { ResourceService } from '../resources.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ResourceExistsPipe } from '../../pipes/resource-exists.pipe';
 import { prismaMock } from '../../__mocks__/prisma.mock';
-
+import { CreateResourceDto } from '../dto/create-resource.dto';
+import { UpdateResourceDto } from '../dto/update-resource.dto';
 
 describe('SpacesController', () => {
   let controller: ResourceController;
