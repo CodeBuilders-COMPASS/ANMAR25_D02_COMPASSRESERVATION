@@ -9,11 +9,12 @@ import { ResourceModule } from './resources/resources.module';
 import { ReservationModule } from './reservations/reservations.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ClientModule } from './clients/client.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule,
-    SpacesModule, ResourceModule, ReservationModule],
+    SpacesModule, ResourceModule, ReservationModule, ClientModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
   exports: [AppService],

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -9,36 +9,24 @@ import { StatusEnum } from '../enums/status.enum';
 export class ClientService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateClientDto) {
-    
-    const existingEmail = await this.prisma.client.findFirst({
-      where: {
-        email: dto.email,
-        status: StatusEnum.ACTIVE,
-      },
-    });
-  
-    const existingCpf = await this.prisma.client.findFirst({
-      where: {
-        cpf: dto.cpf,
-        status: StatusEnum.ACTIVE,
-      },
-    });
-    
-    if (existingEmail) {
-      throw new BadRequestException(`Email '${dto.email}' is already in use by an active client.`);
+  async create(dto: CreateClientDto): Promise<any> {
+    try {
+      const newClient = await this.prisma.client.create({
+        data: {
+          ...dto,
+          status: StatusEnum.ACTIVE, 
+        },
+      });
+      return newClient;
+    } catch (error: any) {
+      
+      if (error.code === 'P2002') {
+        throw new BadRequestException('Email or CPF already registered');
+      }
+      throw new InternalServerErrorException(
+        'Error creating client: ' + error.message,
+      );
     }
-  
-    if (existingCpf) {
-      throw new BadRequestException(`CPF '${dto.cpf}' is already in use by an active client.`);
-    }
-  
-    return this.prisma.client.create({
-      data: {
-        ...dto,
-        status: StatusEnum.ACTIVE,
-      },
-    });
   }
   
   async update(id: number, dto: UpdateClientDto): Promise<any> {
@@ -51,7 +39,7 @@ export class ClientService {
           ...(dto.birth_date && { birth_date: dto.birth_date }),
           ...(dto.email && { email: dto.email }),
           ...(dto.phone && { phone: dto.phone }),
-          updatedAt: new Date(),
+          updated_at: new Date(),
         },
       });
       return updatedClient;
