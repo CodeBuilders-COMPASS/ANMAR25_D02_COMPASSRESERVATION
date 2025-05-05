@@ -91,6 +91,54 @@ export class ClientService {
   }
   
 
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    filters?: {
+      email?: string;
+      name?: string;
+      cpf?: string;
+      status?: StatusEnum;
+    },
+  ): Promise<any> {
+    const where: any = {};
+  
+    if (filters?.email) {
+      where.email = { contains: filters.email, mode: 'insensitive' };
+    }
+  
+    if (filters?.name) {
+      where.name = { contains: filters.name, mode: 'insensitive' };
+    }
+  
+    if (filters?.cpf) {
+      where.cpf = { contains: filters.cpf };
+    }
+  
+    if (filters?.status !== undefined) {
+      where.status = filters.status;
+    }
+  
+    const [clients, total] = await Promise.all([
+      this.prisma.client.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+      }),
+      this.prisma.client.count({ where }),
+    ]);
+  
+    return {
+      data: clients,
+      meta: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+  
   
 }
 
