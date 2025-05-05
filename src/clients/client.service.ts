@@ -11,29 +11,52 @@ export class ClientService {
 
   async create(dto: CreateClientDto): Promise<any> {
     try {
+      const existingEmail = await this.prisma.client.findUnique({
+        where: { email: dto.email },
+      });
+  
+      const existingCpf = await this.prisma.client.findUnique({
+        where: { cpf: dto.cpf },
+      });
+  
+      if (existingEmail && existingCpf) {
+        throw new BadRequestException('Both email and CPF are already registered');
+      }
+      
+      if (existingEmail) {
+        throw new BadRequestException('This email is already registered');
+      }
+      
+      if (existingCpf) {
+        throw new BadRequestException('This CPF is already registered');
+      }
+  
       const birthDate = new Date(dto.birth_date);
       if (isNaN(birthDate.getTime())) {
         throw new BadRequestException('Invalid birth date format');
       }
+  
       const newClient = await this.prisma.client.create({
         data: {
           ...dto,
-          birth_date: birthDate, 
+          birth_date: birthDate,
           status: StatusEnum.ACTIVE,
         },
       });
+  
       return newClient;
     } catch (error: any) {
-      if (error.code === 'P2002') {
-        throw new BadRequestException('Email or CPF already registered');
+      
+      if (error instanceof BadRequestException) {
+        throw error; 
       }
-  
+      
       throw new InternalServerErrorException(
-        `Error creating client: ${error.message}`,
-        error.stack,
+        'An error occurred while creating the client. Please try again later.',
       );
     }
   }
+  
   
   
   async update(id: number, dto: UpdateClientDto): Promise<any> {
