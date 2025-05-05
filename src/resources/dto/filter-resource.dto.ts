@@ -6,13 +6,7 @@ export class FilterResourceDto {
   @IsOptional()
   @IsString()
   name?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  quantity?: number;
-
+  
   @IsOptional()
   @IsEnum(StatusEnum)
   status?: StatusEnum;
