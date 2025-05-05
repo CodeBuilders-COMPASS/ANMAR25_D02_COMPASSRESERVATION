@@ -57,26 +57,39 @@ export class ClientService {
     }
   }
   
-  
-  
   async update(id: number, dto: UpdateClientDto): Promise<any> {
     try {
+      const data: any = {
+        ...dto,
+        updated_at: new Date(),
+      };
+  
+      if (dto.birth_date) {
+        const birthDate = new Date(dto.birth_date);
+        if (isNaN(birthDate.getTime())) {
+          throw new BadRequestException('Invalid birth date format');
+        }
+        data.birth_date = birthDate;
+      }
+  
       const updatedClient = await this.prisma.client.update({
         where: { id },
-        data: {
-          ...(dto.name && { name: dto.name }),
-          ...(dto.cpf && { cpf: dto.cpf }),
-          ...(dto.birth_date && { birth_date: dto.birth_date }),
-          ...(dto.email && { email: dto.email }),
-          ...(dto.phone && { phone: dto.phone }),
-          updated_at: new Date(),
-        },
+        data,
       });
+  
       return updatedClient;
-    } catch (error) {
-      throw new BadRequestException(`Error updating client: ${error.message}`);
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('Client not found');
+      }
+  
+      throw new InternalServerErrorException(
+        `Error updating client: ${error.message}`,
+        error.stack,
+      );
     }
   }
+  
 
   
 }
