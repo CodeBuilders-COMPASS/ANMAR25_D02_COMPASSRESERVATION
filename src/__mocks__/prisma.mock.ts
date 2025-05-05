@@ -7,4 +7,7 @@ export const prismaMock = {
     delete: jest.fn(),
     count: jest.fn(), 
   },
+    resource: {
+      findUnique: jest.fn(),
+    },
 };
