@@ -26,6 +26,7 @@ export class SpacesController {
       return this.spacesService.findOne(id);
     }
     @Patch(':id')
+    @UsePipes( ResourcesValidationExistPipe )
     update(
       @Param('id', ParseIntPipe, PositiveIntPipe, SpaceExistsPipe) id: number, 
       @Body() updateSpaceDto: UpdateSpaceDto
