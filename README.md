@@ -1,197 +1,162 @@
+# Compass Reservation API
 
+RESTful API for managing space and resource reservations, developed with **NestJS**, **Prisma**, **TypeScript**, **MySQL**, and documented with **Swagger**.
 
-## 🚀 Endpoints SPACES
+## 📚 Technologies
 
-### 1. Create Space
+- **NestJS** – Backend framework  
+- **TypeScript** – Main language  
+- **Prisma ORM** – Database access and migrations  
+- **MySQL / MariaDB** – Relational database (via XAMPP or Docker)  
+- **Swagger** – Automatic API documentation (`/api`)  
+- **Docker & Docker Compose** – Optional containers for MySQL and services  
+- **Jest + Supertest** – Unit and integration testing  
+- **ESLint & Prettier** – Linter and code formatter  
+- **class-validator / class-transformer** – DTO validations  
+- **JWT (jsonwebtoken) + Passport** – Token-based authentication  
+- **bcrypt** – Password hashing  
 
-**POST** `/spaces`
-
-#### Request Body:
-
-```json
-{
-  "name": "Conference Room A",
-  "description": "A large conference room with a projector.",
-  "capacity": 20
-}
-```
-
-#### Response 201 Created:
-
-```json
-{
-  "id": 1,
-  "name": "Conference Room A",
-  "description": "A large conference room with a projector.",
-  "capacity": 20,
-  "status": "ACTIVE",
-  "createdAt": "2025-04-29T02:34:15.671Z"
-}
-```
-
-**Rules:**
-- All fields are required.
-- Name must be unique.
-- Status is automatically set to `ACTIVE`.
-- `createdAt` is generated at creation time.
-
----
-
-### 2. Edit Space
-
-**PATCH** `/spaces/:id`
-
-#### Request Body (partial or complete):
-
-```json
-{
-  "name": "Updated Room Name",
-  "description": "New description",
-  "capacity": 30
-}
-```
-
-#### Response 200 OK:
-
-```json
-{
-  "id": 1,
-  "name": "Updated Room Name",
-  "description": "New description",
-  "capacity": 30,
-  "status": "ACTIVE",
-  "createdAt": "2025-04-29T02:34:15.671Z",
-  "updatedAt": "2025-04-29T03:12:10.123Z"
-}
-```
-
-**Rules:**
-- All fields are optional for updates.
-- If changed, updates the `updatedAt` timestamp.
-- Same validations as creation (unique name, etc).
-
----
-
-### 3. List Spaces (with filters and pagination)
-
-**GET** `/spaces`
-
-#### Query Params:
-
-| Param       | Type     | Description |
-|:------------|:---------|:----------|
-| `name`      | `string` | Partial name search |
-| `capacity`  | `number` | Minimum capacity |
-| `status`    | `ACTIVE` or `INACTIVE` | Space status |
-| `page`      | `number` | Current page (default: 1) |
-| `limit`     | `number` | Items per page (default: 10) |
-
-#### Example call:
+## 📁 Folder Structure
 
 ```
-GET /spaces?name=conference&capacity=10&status=ACTIVE&page=1&limit=5
+src/
+├── clients/
+├── decorators/
+├── enums/
+├── middlewares/
+├── prisma/
+├── reservations/
+├── resources/
+├── spaces/
+├── users/
+├── app.module.ts
+├── app.controller.ts
+├── app.service.ts
+└── main.ts
 ```
 
-#### Response 200 OK:
+## ⚙️ Prerequisites
 
-```json
-{
-  "count": 13,
-  "pages": 3,
-  "data": [
-    {
-      "id": 1,
-      "name": "Conference Room A",
-      "description": "A large conference room with a projector.",
-      "capacity": 20,
-      "status": "ACTIVE",
-      "createdAt": "2025-04-29T01:59:07.671Z"
-    },
-    {
-      "id": 2,
-      "name": "Meeting Room B",
-      "description": "A small meeting room for team discussions.",
-      "capacity": 10,
-      "status": "ACTIVE",
-      "createdAt": "2025-04-29T01:59:07.671Z"
-    }
-  ]
-}
+- Node.js v16+ and npm or pnpm  
+- XAMPP (MySQL/MariaDB) or Docker (to run MySQL via docker-compose)  
+
+## 📦 Using XAMPP
+
+1. Start Apache and MySQL in the XAMPP control panel.  
+2. Open phpMyAdmin and create the database `reservation`.  
+3. Verify user/password (default `root` with no password) or adjust in `.env`.  
+
+## 🐳 Using Docker
+
+```bash
+# In project root
+docker-compose up -d
 ```
 
----
+The `docker-compose.yml` already sets up a MySQL container on `localhost:3306` with a persistent data volume.
 
-### 4. Get Space by ID
+## 🚀 Installation and Running
 
-**GET** `/spaces/:id`
+1. Clone the repository and switch to the feature branch:
 
-#### Response 200 OK:
-
-```json
-{
-  "id": 1,
-  "name": "Conference Room A",
-  "description": "A large conference room with a projector.",
-  "capacity": 20,
-  "status": "ACTIVE",
-  "createdAt": "2025-04-29T02:34:15.671Z"
-}
+```bash
+git clone <repo-url>
+cd CompassReservation
 ```
 
-#### Error 404:
+2. Install dependencies:
 
-```json
-{
-  "statusCode": 404,
-  "message": "Space not found",
-  "error": "Not Found"
-}
+```bash
+npm install
 ```
 
----
+3. Copy environment variables example:
 
-### 5. Deactivate Space (Soft Delete)
-
-**PATCH** `/spaces/:id/deactivate`
-
-(Note: **Doesn't physically delete**, only changes status.)
-
-#### Response 200 OK:
-
-```json
-{
-  "id": 1,
-  "name": "Conference Room A",
-  "description": "A large conference room with a projector.",
-  "capacity": 20,
-  "status": "INACTIVE",
-  "createdAt": "2025-04-29T02:34:15.671Z",
-  "updatedAt": "2025-04-29T03:45:22.002Z"
-}
+```bash
+cp .env.example .env
 ```
 
-#### Error 404:
+4. Edit `.env` with your credentials.
 
-```json
-{
-  "statusCode": 404,
-  "message": "Space not found",
-  "error": "Not Found"
-}
+5. Generate Prisma Client and apply migrations:
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
 ```
 
----
+6. Start the application in development mode:
 
-# 📄 Object Structure (Space)
-
-```typescript
-interface Space {
-  id: number;
-  name: string;
-  description?: string;
-  capacity: number;
-  status: 'ACTIVE' | 'INACTIVE';
-  createdAt: Date;
-  updatedAt?: Date;
-}
+```bash
+npm run dev
 ```
+
+7. Access Swagger documentation at:
+
+```
+http://localhost:3000/api
+```
+
+## 🧪 Tests
+
+- **Unit** and **e2e** tests:
+
+```bash
+npm run test        # run all tests
+npm run test:e2e    # run end-to-end tests
+```
+
+## 🛠️ Linters & Formatting
+
+- **ESLint**:
+
+```bash
+npm run lint
+npm run lint:fix
+```
+
+- **Prettier**:
+
+```bash
+npm run format
+```
+
+## 📝 Reservation Endpoint Description
+
+The `ReservationService` handles the business logic for managing reservations of spaces and resources. It interacts with a database via Prisma ORM and performs operations like creation, updating, retrieval, and cancellation. Highlights:
+
+### 1. `create(data: CreateReservationDto)`
+- Validates client, space, and requested resources (availability and stock).
+- Checks for scheduling conflicts.
+- Creates reservation and resource relationships.
+- Decrements resource quantities.
+
+### 2. `update(id: number, dto: UpdateReservationDto)`
+- Ensures reservation exists and is `OPEN`.
+- Validates client, space, and new resources.
+- Deletes old resources and associates new ones.
+- Updates reservation details.
+
+### 3. `findAll(page: number = 1)`
+- Paginates and returns all reservations with metadata.
+
+### 4. `findOne(id: number)`
+- Validates reservation exists and is `OPEN`.
+- Ensures all associated data (client, space, resources) are active.
+
+### 5. `cancel(id: number)`
+- Cancels reservation only if `OPEN`.
+- Marks reservation as `CANCELLED` and records timestamp.
+
+## 🌱 Seed Script
+
+- Seeds initial admin and example data for development.
+
+## 📌 Notes
+
+- Keep `.env` secure and in `.gitignore`.
+- Use `.env.example` for reference.
+- Resolve `.git/index.lock` issues manually if needed.
+- Check Docker MySQL version compatibility if used.
+
+**CodeBuilders Team © 2025**
