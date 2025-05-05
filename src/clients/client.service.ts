@@ -165,11 +165,7 @@ export class ClientService {
       },
     });
   
-    if (!client) {
-      throw new NotFoundException(`Client with ID ${id} not found`);
-    }
-  
-    if (client.reservations.length > 0) {
+    if (client!.reservations.length > 0) {
       throw new BadRequestException(
         'Cannot deactivate a client with open or approved reservations',
       );
