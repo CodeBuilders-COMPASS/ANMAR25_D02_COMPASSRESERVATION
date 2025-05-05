@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, Query, ParseIntPipe, Patch, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Query, Patch, UsePipes } from '@nestjs/common';
 import { ReservationService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -30,7 +30,7 @@ export class ReservationController {
   }
   @Get(':id')
   async findOne(
-    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) id: number
+    @Param('id', PositiveIntPipe, ReservationExistsPipe) id: number
   ) {
     return this.reservationService.findOne(id);
   }
@@ -42,14 +42,14 @@ export class ReservationController {
   )
 
   async update(
-    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe) id: number, 
+    @Param('id', PositiveIntPipe, ReservationExistsPipe) id: number, 
     @Body() updateReservationDto: UpdateReservationDto){
     return this.reservationService.update(id, updateReservationDto);
   }
 
   @Delete(':id/cancel')
   async cancel(
-    @Param('id', ParseIntPipe, PositiveIntPipe, ReservationExistsPipe)  id: number
+    @Param('id', PositiveIntPipe, ReservationExistsPipe)  id: number
   ) {
     return this.reservationService.cancel(id);
   }

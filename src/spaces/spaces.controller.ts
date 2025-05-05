@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Query, ParseIntPipe, Delete, Patch, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Delete, Patch, UsePipes } from '@nestjs/common';
 import { FilterSpaceDto } from './dto/filter-space.dto';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
@@ -22,19 +22,19 @@ export class SpacesController {
     }
   
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe, PositiveIntPipe, SpaceExistsPipe) id: number) {
+    findOne(@Param('id', PositiveIntPipe, SpaceExistsPipe) id: number) {
       return this.spacesService.findOne(id);
     }
     @Patch(':id')
     @UsePipes( ResourcesValidationExistPipe )
     update(
-      @Param('id', ParseIntPipe, PositiveIntPipe, SpaceExistsPipe) id: number, 
+      @Param('id', PositiveIntPipe, SpaceExistsPipe) id: number, 
       @Body() updateSpaceDto: UpdateSpaceDto
     ) {
       return this.spacesService.update(id, updateSpaceDto);
     }
     @Delete(':id/deactivate')
-    async deactivate(@Param('id', ParseIntPipe, PositiveIntPipe, SpaceExistsPipe) id: number) {
+    async deactivate(@Param('id', PositiveIntPipe, SpaceExistsPipe) id: number) {
       return this.spacesService.remove(id); 
     }
 }
