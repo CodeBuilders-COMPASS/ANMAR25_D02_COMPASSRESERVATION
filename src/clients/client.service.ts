@@ -11,23 +11,30 @@ export class ClientService {
 
   async create(dto: CreateClientDto): Promise<any> {
     try {
+      const birthDate = new Date(dto.birth_date);
+      if (isNaN(birthDate.getTime())) {
+        throw new BadRequestException('Invalid birth date format');
+      }
       const newClient = await this.prisma.client.create({
         data: {
           ...dto,
-          status: StatusEnum.ACTIVE, 
+          birth_date: birthDate, 
+          status: StatusEnum.ACTIVE,
         },
       });
       return newClient;
     } catch (error: any) {
-      
       if (error.code === 'P2002') {
         throw new BadRequestException('Email or CPF already registered');
       }
+  
       throw new InternalServerErrorException(
-        'Error creating client: ' + error.message,
+        `Error creating client: ${error.message}`,
+        error.stack,
       );
     }
   }
+  
   
   async update(id: number, dto: UpdateClientDto): Promise<any> {
     try {

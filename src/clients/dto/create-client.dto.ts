@@ -21,7 +21,7 @@ export class CreateClientDto {
   cpf: string;
 
   @IsDateString({}, { message: 'Birth date must be a valid date in YYYY-MM-DD format' })
-  birth_date: Date;
+  birth_date: string;
 
   @IsEmail({}, { message: 'Email must be a valid email address' })
   email: string;
