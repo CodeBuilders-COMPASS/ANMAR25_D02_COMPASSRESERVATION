@@ -9,7 +9,6 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe,
   Delete,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
