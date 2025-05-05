@@ -70,7 +70,8 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found.');
 
-    const updateData: any = { ...data };
+    const updateData: any = { ...data, updated_at: new Date() };
+
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
     }
@@ -87,7 +88,10 @@ export class UsersService {
 
     return this.prisma.user.update({
       where: { id },
-      data: { status: StatusEnum.INACTIVE },
+      data: {
+        status: StatusEnum.INACTIVE,
+        updated_at: new Date(),
+      },
     });
   }
 }
