@@ -33,6 +33,7 @@ describe('SpacesService', () => {
         name: 'Test Space',
         description: 'Test Description',
         capacity: 10,
+        resources: [], 
       };
 
       prismaMock.space.findUnique.mockResolvedValue(null);
@@ -55,6 +56,7 @@ describe('SpacesService', () => {
         name: 'Existing Space',
         description: 'Test Description',
         capacity: 10,
+        resources: [], 
       };
 
       prismaMock.space.findUnique.mockResolvedValue({
@@ -98,6 +100,13 @@ describe('SpacesService', () => {
         skip: 0,
         take: 10,
         orderBy: { created_at: 'desc' },
+        include: {
+          spaceResources: {
+            include: {
+              resource: true,
+            },
+          },
+        },
       });
     });
   });
