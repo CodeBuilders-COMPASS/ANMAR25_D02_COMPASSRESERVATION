@@ -8,6 +8,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { ResourceModule } from './resources/resources.module';
 import { ReservationModule } from './reservations/reservations.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
