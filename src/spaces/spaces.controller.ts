@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Query, Delete, Patch, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Delete, Patch, UsePipes, UseGuards } from '@nestjs/common';
 import { FilterSpaceDto } from './dto/filter-space.dto';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
@@ -6,8 +6,10 @@ import { SpacesService } from './spaces.service';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { SpaceExistsPipe } from 'src/pipes/space-exists.pipe';
 import { ResourcesValidationExistPipe } from 'src/pipes/validate-resources-exist.pipe';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @Controller('spaces')
+@UseGuards(JwtAuthGuard)
 export class SpacesController {
     constructor(private readonly spacesService: SpacesService) {}
 
