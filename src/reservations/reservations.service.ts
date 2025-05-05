@@ -48,6 +48,7 @@ export class ReservationService {
 
   async findAll(filterDto: FilterReservationDto) {
     const {
+      cpf,
       status,
       page = 1,
       limit = 10,
@@ -55,8 +56,26 @@ export class ReservationService {
 
     const skip = (page - 1) * limit;
 
+    let foundClienteId: number | null = null;
+
+    if(cpf && cpf !== undefined){
+      const client = await this.prisma.client.findUnique({ 
+        where: {
+          cpf: cpf,
+        },
+        select: {
+          id: true,
+        }
+       });
+
+       if(!client){
+          throw new NotFoundException('Not found CPF')
+       }
+       foundClienteId = client.id;
+    }
     const where = {
       status: status ?? undefined,
+      client_id: foundClienteId ?? undefined,
     };
 
     const [count, data] = await Promise.all([
