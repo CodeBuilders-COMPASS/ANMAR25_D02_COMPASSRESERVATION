@@ -103,8 +103,8 @@ export class SpacesService {
       if (nameExists && nameExists.id !== id) {
         throw new BadRequestException('Space with this name already exists.');
       }
-    }
-
+    }   
+ 
     return this.prisma.space.update({
       where: { id },
       data: {

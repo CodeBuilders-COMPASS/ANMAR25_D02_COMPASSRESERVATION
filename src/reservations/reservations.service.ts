@@ -159,10 +159,10 @@ export class ReservationService {
 
     const dataToUpdate: Prisma.ReservationUpdateInput = {};
     if (updateReservationDto.start_date) {
-      dataToUpdate.start_date = updateReservationDto.start_date;
+      dataToUpdate.start_date = new Date(updateReservationDto.start_date);
     }
     if (updateReservationDto.end_date) {
-      dataToUpdate.end_date = updateReservationDto.end_date;
+      dataToUpdate.end_date = new Date(updateReservationDto.end_date);
     }
     if (updateReservationDto.status) {
       dataToUpdate.status = updateReservationDto.status;
@@ -171,10 +171,10 @@ export class ReservationService {
     if (updateReservationDto.status === ReservationStatus.CLOSED) {
       dataToUpdate.closed_at = new Date();
     }
-
+    dataToUpdate.updated_at = new Date();
     return this.prisma.reservation.update({
       where: { id },
-      data: dataToUpdate,
+      data: dataToUpdate
     });
   }
 
