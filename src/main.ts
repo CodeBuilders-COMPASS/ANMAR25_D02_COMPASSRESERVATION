@@ -19,14 +19,18 @@ async function bootstrap() {
   .setTitle('Reservation API')
   .setDescription('Reservation API ')
   .setVersion('1.0')
-  .addTag('users')
-  .addTag('users')
-  .addTag('users')
-  .addTag('users')
-  .addTag('users')
   .build();
 const documentFactory = () => SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api', app, documentFactory);
+
+
+
+  app.enableCors({
+    origin: true, 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, 
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
