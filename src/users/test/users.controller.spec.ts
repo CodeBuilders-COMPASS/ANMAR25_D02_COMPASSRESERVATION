@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
-import { PrismaService } from '../../prisma/prisma.service';  // Adicione esta linha
-import { UserExistsPipe } from '../../pipes/user-exists.pipe'; // Se necessário
+import { PrismaService } from '../../prisma/prisma.service';  
+import { UserExistsPipe } from '../../pipes/user-exists.pipe'; 
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -25,8 +25,8 @@ describe('UsersController', () => {
           provide: UsersService,
           useValue: mockUserService,
         },
-        PrismaService,  // Adicione o PrismaService como provider
-        UserExistsPipe, // Se o UserExistsPipe for necessário, adicione aqui
+        PrismaService,  
+        UserExistsPipe, 
       ],
     }).compile();
 
@@ -39,7 +39,7 @@ describe('UsersController', () => {
   });
 
   it('should return an array of users', async () => {
-    const query = {}; // ou adicione filtros para testar lógica do where
+    const query = {}; 
     const result = await controller.findAll(query);
 
     expect(result).toEqual(mockUsers);
