@@ -5,6 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { UserExistsPipe } from 'src/pipes/user-exists.pipe';
+import { FilterUserDto } from './dto/filter-user.dto';
 
 
 
@@ -14,13 +15,13 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
-  create(@Body() data: CreateUserDto) {
-    return this.usersService.create(data);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
-  findAll(@Query() query) {
-    return this.usersService.findAll(query);
+  findAll(@Query() filterDto: FilterUserDto) {
+    return this.usersService.findAll(filterDto);
   }
 
   @Get(':id')
@@ -29,8 +30,8 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id', PositiveIntPipe, UserExistsPipe) id: number, @Body() data: UpdateUserDto) {
-    return this.usersService.update(id, data);
+  update(@Param('id', PositiveIntPipe, UserExistsPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
