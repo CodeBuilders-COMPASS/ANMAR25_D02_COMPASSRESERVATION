@@ -7,7 +7,10 @@ import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { SpaceExistsPipe } from 'src/pipes/space-exists.pipe';
 import { ResourcesValidationExistPipe } from 'src/pipes/validate-resources-exist.pipe';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('spaces')
 @Controller('spaces')
 @UseGuards(JwtAuthGuard)
 export class SpacesController {
@@ -40,3 +43,5 @@ export class SpacesController {
       return this.spacesService.remove(id); 
     }
 }
+
+

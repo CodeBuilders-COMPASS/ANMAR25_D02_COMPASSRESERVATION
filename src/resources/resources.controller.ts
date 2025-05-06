@@ -6,8 +6,9 @@ import { UpdateResourceDto } from './dto/update-resource.dto';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { ResourceExistsPipe } from 'src/pipes/resource-exists.pipe';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('resources')
 @Controller('resources')
 @UseGuards(JwtAuthGuard)
 export class ResourceController {
