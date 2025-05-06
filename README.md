@@ -159,6 +159,22 @@ or
 ```bash
 npm run start
 ```
+### 9. Testing 
+Testing
+The API has automated tests with Jest. To run the tests:
+
+```bash
+npm run test
+```
+
+To run tests with coverage:
+
+
+```bash
+npm run test:cov
+```
+
+
 # Auth Module Documentation
 
 ## Overview
