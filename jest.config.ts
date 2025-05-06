@@ -11,6 +11,8 @@ const config: Config = {
     '^src/(.*)$': '<rootDir>/src/$1',
   },
   testEnvironment: 'node',
+
+  modulePathIgnorePatterns: ['<rootDir>/dist/']
 };
 
 export default config;
