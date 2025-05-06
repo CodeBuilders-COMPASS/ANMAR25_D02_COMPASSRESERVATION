@@ -8,9 +8,4 @@ export class UpdateResourceDto {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  quantity?: number;
 }

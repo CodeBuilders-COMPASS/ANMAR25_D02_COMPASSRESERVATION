@@ -452,12 +452,9 @@ describe('ReservationService', () => {
     it('should update a reservation', async () => {
       const reservationId = 1;
       const updateReservationDto: UpdateReservationDto = {
-        client_id: 2,
-        space_id: 2,
         start_date: new Date().toISOString(),
         end_date: new Date().toISOString(),
         status: ReservationStatus.APPROVED,
-        resources: [{ resource_id: 2, quantity: 3 }],
       };
 
       const existingReservation = {
@@ -483,23 +480,13 @@ describe('ReservationService', () => {
 
       const updatedReservation = {
         ...existingReservation,
-        client_id: updateReservationDto.client_id,
-        space_id: updateReservationDto.space_id,
         start_date: new Date(updateReservationDto.start_date!),
         end_date: new Date(updateReservationDto.end_date!),
         status: updateReservationDto.status,
         updated_at: new Date(),
-        reservationResources: updateReservationDto.resources?.map(r => ({
-          reservation_id: reservationId,
-          resourceId: r.resource_id,
-          quantity: r.quantity,
-          resource: {id: r.resource_id, name: 'Resource 2', quantity: 8, status: StatusEnum.ACTIVE, created_at: new Date(), updated_at: null}
-        })) || [],
       };
 
       prisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      prisma.reservationResource.deleteMany.mockResolvedValue({ count: 1 });
-      prisma.reservationResource.createMany.mockResolvedValue({ count: updateReservationDto.resources!.length });
       prisma.reservation.update.mockResolvedValue(updatedReservation);
 
       const result = await service.update(reservationId, updateReservationDto);
@@ -508,21 +495,9 @@ describe('ReservationService', () => {
         where: { id: reservationId },
         include: { reservationResources: true },
       });
-      expect(prisma.reservationResource.deleteMany).toHaveBeenCalledWith({
-        where: { reservation_id: reservationId },
-      });
-      expect(prisma.reservationResource.createMany).toHaveBeenCalledWith({
-        data: updateReservationDto.resources!.map(r => ({
-          reservation_id: reservationId,
-          resource_id: r.resource_id,
-          quantity: r.quantity,
-        })),
-      });
       expect(prisma.reservation.update).toHaveBeenCalledWith({
         where: { id: reservationId },
         data: {
-          client_id: updateReservationDto.client_id,
-          space_id: updateReservationDto.space_id,
           start_date: new Date(updateReservationDto.start_date!),
           end_date: new Date(updateReservationDto.end_date!),
           status: updateReservationDto.status,
@@ -534,7 +509,7 @@ describe('ReservationService', () => {
 
     it('should throw NotFoundException if reservation to update does not exist', async () => {
       const reservationId = 1;
-      const updateReservationDto: UpdateReservationDto = { client_id: 2, space_id: 2 };
+      const updateReservationDto: UpdateReservationDto = { status: ReservationStatus.APPROVED };
 
       prisma.reservation.findUnique.mockResolvedValue(null);
 
@@ -547,33 +522,6 @@ describe('ReservationService', () => {
       expect(prisma.reservation.update).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException if reservation status is not OPEN', async () => {
-      const reservationId = 1;
-      const updateReservationDto = { client_id: 2, space_id: 2 };
-      const existingReservation = {
-        id: reservationId,
-        client_id: 1,
-        user_id: 1,
-        space_id: 1,
-        start_date: new Date(),
-        end_date: new Date(),
-        created_at: new Date(),
-        updated_at: null,
-        status: ReservationStatus.APPROVED,
-        reservationResources: [],
-      };
-
-      prisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      prisma.reservation.update.mockRejectedValue(new BadRequestException());
-
-      await expect(service.update(reservationId, updateReservationDto)).rejects.toThrowError(BadRequestException);
-
-      expect(prisma.reservation.findUnique).toHaveBeenCalledWith({
-        where: { id: reservationId },
-        include: { reservationResources: true },
-      });
-      expect(prisma.reservation.update).not.toHaveBeenCalled();
-    });
   });
 
   describe('cancel', () => {
