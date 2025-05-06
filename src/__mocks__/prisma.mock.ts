@@ -1,3 +1,5 @@
+import { count } from "console";
+
 export const prismaMock = {
   space: {
     findMany: jest.fn(),
@@ -22,6 +24,8 @@ export const prismaMock = {
     findById: jest.fn(),
     deactivate: jest.fn(),
     findUnique: jest.fn(),
+    findMany: jest.fn(),
+    count: jest.fn(),
   },
   user: {
     findUnique: jest.fn(),

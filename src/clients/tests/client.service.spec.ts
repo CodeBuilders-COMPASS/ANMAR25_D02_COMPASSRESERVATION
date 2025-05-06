@@ -5,21 +5,13 @@ import { CreateClientDto } from '../dto/create-client.dto';
 import { UpdateClientDto } from '../dto/update-client.dto';
 import { FilterClientDto } from '../dto/filter-client.dto';
 import { StatusEnum } from '../../enums/status.enum';
+import { prismaMock } from '../../__mocks__/prisma.mock';
 import { BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 
 describe('ClientService', () => {
   let service: ClientService;
   let prisma: PrismaService;
 
-  const mockPrismaService = {
-    client: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      findMany: jest.fn(),
-      count: jest.fn(),
-    },
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +19,7 @@ describe('ClientService', () => {
         ClientService,
         {
           provide: PrismaService,
-          useValue: mockPrismaService,
+          useValue: prismaMock,
         },
       ],
     }).compile();
@@ -56,8 +48,8 @@ describe('ClientService', () => {
         updated_at: null,
       };
 
-      mockPrismaService.client.findUnique.mockResolvedValue(null);
-      mockPrismaService.client.create.mockResolvedValue(expectedResult);
+      prismaMock.client.findUnique.mockResolvedValue(null);
+      prismaMock.client.create.mockResolvedValue(expectedResult);
 
       const result = await service.create(createDto);
 
@@ -83,7 +75,7 @@ describe('ClientService', () => {
         phone: '(11) 99999-9999',
       };
 
-      mockPrismaService.client.findUnique.mockResolvedValueOnce({ email: createDto.email });
+      prismaMock.client.findUnique.mockResolvedValueOnce({ email: createDto.email });
 
       await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
     });
@@ -97,7 +89,7 @@ describe('ClientService', () => {
         phone: '(11) 99999-9999',
       };
 
-      mockPrismaService.client.findUnique
+      prismaMock.client.findUnique
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce({ cpf: createDto.cpf });
 
@@ -113,7 +105,7 @@ describe('ClientService', () => {
         phone: '(11) 99999-9999',
       };
 
-      mockPrismaService.client.findUnique.mockRejectedValue(new Error('Unexpected error'));
+      prismaMock.client.findUnique.mockRejectedValue(new Error('Unexpected error'));
 
       await expect(service.create(createDto)).rejects.toThrow(InternalServerErrorException);
     });
@@ -134,7 +126,7 @@ describe('ClientService', () => {
         updated_at: new Date(),
       };
 
-      mockPrismaService.client.update.mockResolvedValue(expectedResult);
+      prismaMock.client.update.mockResolvedValue(expectedResult);
 
       const result = await service.update(1, updateDto);
       expect(result).toEqual(expectedResult);
@@ -161,7 +153,7 @@ describe('ClientService', () => {
         updated_at: new Date(),
       };
 
-      mockPrismaService.client.update.mockResolvedValue(expectedResult);
+      prismaMock.client.update.mockResolvedValue(expectedResult);
 
       const result = await service.update(1, updateDto);
 
@@ -177,14 +169,14 @@ describe('ClientService', () => {
 
     it('should throw NotFoundException if client not found', async () => {
       const updateDto: UpdateClientDto = { name: 'John Updated' };
-      mockPrismaService.client.update.mockRejectedValue({ code: 'P2025' });
+      prismaMock.client.update.mockRejectedValue({ code: 'P2025' });
 
       await expect(service.update(1, updateDto)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw InternalServerErrorException on unexpected error', async () => {
       const updateDto: UpdateClientDto = { name: 'John Updated' };
-      mockPrismaService.client.update.mockRejectedValue(new Error('Unexpected error'));
+      prismaMock.client.update.mockRejectedValue(new Error('Unexpected error'));
 
       await expect(service.update(1, updateDto)).rejects.toThrow(InternalServerErrorException);
     });
@@ -210,8 +202,8 @@ describe('ClientService', () => {
         meta: { total: 1, page: 1, pages: 1 },
       };
 
-      mockPrismaService.client.findMany.mockResolvedValue(mockClients);
-      mockPrismaService.client.count.mockResolvedValue(1);
+      prismaMock.client.findMany.mockResolvedValue(mockClients);
+      prismaMock.client.count.mockResolvedValue(1);
 
       const result = await service.findAll(filterDto);
       expect(result).toEqual(expectedResult);
@@ -238,7 +230,7 @@ describe('ClientService', () => {
         updated_at: new Date(),
       };
 
-      mockPrismaService.client.findUnique.mockResolvedValue(expectedResult);
+      prismaMock.client.findUnique.mockResolvedValue(expectedResult);
 
       const result = await service.findById(1);
       expect(result).toEqual(expectedResult);
@@ -246,7 +238,7 @@ describe('ClientService', () => {
     });
 
     it('should throw NotFoundException if client not found', async () => {
-      mockPrismaService.client.findUnique.mockResolvedValue(null);
+      prismaMock.client.findUnique.mockResolvedValue(null);
       await expect(service.findById(1)).rejects.toThrow(NotFoundException);
     });
   });
@@ -266,15 +258,15 @@ describe('ClientService', () => {
         updated_at: new Date(),
       };
 
-      mockPrismaService.client.findUnique.mockResolvedValue(client);
-      mockPrismaService.client.update.mockResolvedValue(expectedResult);
+      prismaMock.client.findUnique.mockResolvedValue(client);
+      prismaMock.client.update.mockResolvedValue(expectedResult);
 
       const result = await service.deactivate(1);
       expect(result).toEqual(expectedResult);
     });
 
     it('should throw NotFoundException if client not found', async () => {
-      mockPrismaService.client.findUnique.mockResolvedValue(null);
+      prismaMock.client.findUnique.mockResolvedValue(null);
       await expect(service.deactivate(1)).rejects.toThrow(NotFoundException);
     });
 
@@ -286,7 +278,7 @@ describe('ClientService', () => {
         reservations: [{ id: 1, status: 'OPEN' }],
       };
 
-      mockPrismaService.client.findUnique.mockResolvedValue(client);
+      prismaMock.client.findUnique.mockResolvedValue(client);
       await expect(service.deactivate(1)).rejects.toThrow(BadRequestException);
     });
   });
