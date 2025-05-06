@@ -21,6 +21,7 @@ export class ResourceService {
     return this.prisma.resource.create({
       data: {
         ...createResourceDto,
+        updated_at: null, 
         status: StatusEnum.ACTIVE,
       },
     });

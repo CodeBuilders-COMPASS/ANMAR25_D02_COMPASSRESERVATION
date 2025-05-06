@@ -29,6 +29,7 @@ export class SpacesService {
         name,
         description,
         capacity,
+        updated_at: null, 
         status: StatusEnum.ACTIVE,
         spaceResources: {
           create: resources.map((r) => ({

@@ -40,6 +40,7 @@ export class ClientService {
         data: {
           ...dto,
           birth_date: birthDate,
+          updated_at: null, 
           status: StatusEnum.ACTIVE,
         },
       });

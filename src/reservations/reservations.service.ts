@@ -21,6 +21,7 @@ export class ReservationService {
         space_id,
         start_date: new Date(start_date),
         end_date: new Date(end_date),
+        updated_at: null, 
         status: ReservationStatus.OPEN,
         reservationResources: {
           create: resources.map(r => ({

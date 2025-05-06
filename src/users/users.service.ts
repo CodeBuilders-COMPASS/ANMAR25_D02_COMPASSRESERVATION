@@ -17,6 +17,7 @@ export class UsersService {
     return this.prisma.user.create({
       data: {
         ...data,
+        updated_at: null, 
         password,
         status: StatusEnum.ACTIVE,
       },
