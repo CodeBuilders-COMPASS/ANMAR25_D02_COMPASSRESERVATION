@@ -11,6 +11,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ClientModule } from './clients/client.module';
 import { HandlerException } from './common/exception/handler-exception';
+import { IdCheckMiddleware } from './middlewares/id-check.middleware';
+
 
 @Module({
   imports: [
