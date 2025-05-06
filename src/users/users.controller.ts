@@ -5,9 +5,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { UserExistsPipe } from 'src/pipes/user-exists.pipe';
+import { ApiTags } from '@nestjs/swagger';
 
 
-
+@ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {

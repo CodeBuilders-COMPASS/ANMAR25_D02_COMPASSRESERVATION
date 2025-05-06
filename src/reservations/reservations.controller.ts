@@ -10,7 +10,9 @@ import { ReservationConflictPipe } from 'src/pipes/check-reservation-conflict.pi
 import { ReservationExistsPipe } from 'src/pipes/reservation-exists.pipe';
 import { FilterReservationDto } from './dto/filter-reservation.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('reservations')
 @Controller('reservations')
 @UseGuards(JwtAuthGuard)
 export class ReservationController {

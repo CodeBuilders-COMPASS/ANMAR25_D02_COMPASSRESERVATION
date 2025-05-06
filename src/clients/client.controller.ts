@@ -20,7 +20,9 @@ import { PositiveIntPipe } from '../pipes/positive-int.pipe';
 import { ClientExistsPipe } from '../pipes/client-exist.pipe';
 import { FilterClientDto } from './dto/filter-client.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('clients')
 @Controller('clients')
 @UseGuards(JwtAuthGuard)
 export class ClientController {
