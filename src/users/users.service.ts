@@ -4,19 +4,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusEnum } from '../enums/status.enum';
 import * as bcrypt from 'bcrypt';
+import { FilterUserDto } from './dto/filter-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateUserDto) {
-    const emailExists = await this.prisma.user.findUnique({ where: { email: data.email } });
+  async create(createUserDto: CreateUserDto) {
+    const emailExists = await this.prisma.user.findUnique({ where: { email: createUserDto.email } });
     if (emailExists) throw new BadRequestException('Email already exists.');
 
-    const password = await bcrypt.hash(data.password, 10);
+    const password = await bcrypt.hash(createUserDto.password, 10);
     return this.prisma.user.create({
       data: {
-        ...data,
+        ...createUserDto,
         updated_at: null, 
         password,
         status: StatusEnum.ACTIVE,
@@ -24,8 +25,8 @@ export class UsersService {
     });
   }
 
-  async findAll(query) {
-    const { name, email, status, page = 1, limit = 10 } = query;
+  async findAll(filterDto: FilterUserDto) {
+    const { name, email, status, page = 1, limit = 10 } = filterDto;
     const where: any = {};
 
     if (name) where.name = { contains: name };
@@ -67,14 +68,14 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, data: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found.');
 
-    const updateData: any = { ...data, updated_at: new Date() };
+    const updateData: any = { ...updateUserDto, updated_at: new Date() };
 
-    if (data.password) {
-      updateData.password = await bcrypt.hash(data.password, 10);
+    if (updateUserDto.password) {
+      updateData.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
     return this.prisma.user.update({
