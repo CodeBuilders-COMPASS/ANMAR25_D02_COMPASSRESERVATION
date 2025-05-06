@@ -4,17 +4,16 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationStatus } from 'src/enums/reservationStatus.enum';
 import { FilterReservationDto } from './dto/filter-reservation.dto';
-import { equals } from 'class-validator';
 import { Prisma } from '@prisma/client';
 import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class ReservationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createReservationDto: CreateReservationDto) {
     const { client_id, space_id, start_date, end_date, resources } = createReservationDto;
-  
+
     const reservation = await this.prisma.reservation.create({
       data: {
         client_id,
@@ -22,6 +21,7 @@ export class ReservationService {
         space_id,
         start_date: new Date(start_date),
         end_date: new Date(end_date),
+        updated_at: null,
         status: ReservationStatus.OPEN,
         reservationResources: {
           create: resources.map(r => ({
@@ -31,7 +31,7 @@ export class ReservationService {
         },
       },
     });
-  
+
     for (const res of resources) {
       await this.prisma.resource.update({
         where: { id: res.resource_id },
@@ -42,37 +42,29 @@ export class ReservationService {
         },
       });
     }
-  
+
     return reservation;
   }
 
   async findAll(filterDto: FilterReservationDto) {
-    const {
-      cpf,
-      status,
-      page = 1,
-      limit = 10,
-    } = filterDto;
-
+    const { cpf, status, page = 1, limit = 10 } = filterDto;
     const skip = (page - 1) * limit;
 
     let foundClienteId: number | null = null;
 
-    if(cpf && cpf !== undefined){
-      const client = await this.prisma.client.findUnique({ 
-        where: {
-          cpf: cpf,
-        },
-        select: {
-          id: true,
-        }
-       });
+    if (cpf) {
+      const client = await this.prisma.client.findUnique({
+        where: { cpf },
+        select: { id: true },
+      });
 
-       if(!client){
-          throw new NotFoundException('Not found CPF')
-       }
-       foundClienteId = client.id;
+      if (!client) {
+        throw new NotFoundException('Not found CPF');
+      }
+
+      foundClienteId = client.id;
     }
+
     const where = {
       status: status ?? undefined,
       client_id: foundClienteId ?? undefined,
@@ -89,7 +81,7 @@ export class ReservationService {
           space: true,
           reservationResources: {
             include: {
-                resource: true,
+              resource: true,
             },
           },
         },
@@ -115,9 +107,11 @@ export class ReservationService {
         },
       },
     });
+
     if (!reservation) {
       throw new NotFoundException(`Reservation with ID ${id} not found.`);
     }
+
     if (reservation.status !== ReservationStatus.OPEN) {
       throw new BadRequestException('Only reservations with status OPEN can be viewed');
     }
@@ -135,77 +129,74 @@ export class ReservationService {
         throw new BadRequestException(`Resource ID ${res.resource_id} is inactive or does not exist`);
       }
     }
+
     return reservation;
   }
-  
+
   async update(id: number, updateReservationDto: UpdateReservationDto) {
     const reservation = await this.prisma.reservation.findUnique({
-    where: { id },
-    include: {
+      where: { id },
+      include: {
         reservationResources: true,
-    },
+      },
     });
 
     if (!reservation) {
-    throw new NotFoundException('Reservation not found');
+      throw new NotFoundException('Reservation not found');
     }
 
     if (updateReservationDto.status === ReservationStatus.CANCELLED) {
-    throw new BadRequestException("Status cannot be changed to CANCELLED");
+      throw new BadRequestException("Status cannot be changed to CANCELLED");
     }
 
-    if(reservation.status !== ReservationStatus.OPEN && updateReservationDto.status === ReservationStatus.APPROVED){
+    if (reservation.status !== ReservationStatus.OPEN && updateReservationDto.status === ReservationStatus.APPROVED) {
       throw new BadRequestException("Only reservations with status OPEN can be updated to APPROVED");
     }
 
-    if(reservation.status !== ReservationStatus.APPROVED && updateReservationDto.status === ReservationStatus.CLOSED){
+    if (reservation.status !== ReservationStatus.APPROVED && updateReservationDto.status === ReservationStatus.CLOSED) {
       throw new BadRequestException("Only reservations with status APPROVED can be updated to CLOSED ");
     }
-    
+
     const dataToUpdate: Prisma.ReservationUpdateInput = {};
-    if(updateReservationDto.start_date){
+    if (updateReservationDto.start_date) {
       dataToUpdate.start_date = updateReservationDto.start_date;
     }
-    if(updateReservationDto.end_date){
+    if (updateReservationDto.end_date) {
       dataToUpdate.end_date = updateReservationDto.end_date;
     }
-    if(updateReservationDto.status){
+    if (updateReservationDto.status) {
       dataToUpdate.status = updateReservationDto.status;
     }
 
-    if(updateReservationDto.status === ReservationStatus.CLOSED){
+    if (updateReservationDto.status === ReservationStatus.CLOSED) {
       dataToUpdate.closed_at = new Date();
     }
 
-    const updatedReservation = await this.prisma.reservation.update({
-    where: { id },
-    data: dataToUpdate,
+    return this.prisma.reservation.update({
+      where: { id },
+      data: dataToUpdate,
     });
-
-    return updatedReservation;
-}
+  }
 
   async cancel(id: number) {
-      const reservation = await this.prisma.reservation.findUnique({
-        where: { id },
-      });
-  
-      if (!reservation) {
-        throw new NotFoundException('Reservation not found');
-      }
-  
-      if (reservation.status !== ReservationStatus.OPEN) {
-        throw new BadRequestException('Only reservations with status OPEN can be cancelled');
-      }
-  
-      const cancelledReservation = await this.prisma.reservation.update({
-        where: { id },
-        data: {
-          status: ReservationStatus.CANCELLED,
-          updated_at: new Date(),
-        },
-      });
-  
-      return cancelledReservation;
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    if (reservation.status !== ReservationStatus.OPEN) {
+      throw new BadRequestException('Only reservations with status OPEN can be cancelled');
+    }
+
+    return this.prisma.reservation.update({
+      where: { id },
+      data: {
+        status: ReservationStatus.CANCELLED,
+        updated_at: new Date(),
+      },
+    });
   }
 }
