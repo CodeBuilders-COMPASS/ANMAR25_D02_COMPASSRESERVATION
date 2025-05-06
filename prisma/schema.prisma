@@ -26,10 +26,10 @@ model User {
   password   String      @db.VarChar(150) 
   phone      String?     @db.VarChar(20) 
   created_at DateTime    @default(now()) 
-  updated_at DateTime    @updatedAt 
+  updated_at DateTime?   @default(now())
   status     Status      @default(ACTIVE)
 
-  reservations Reservation[] // relação com Reservation
+  reservations Reservation[] 
 
   @@map("users") 
 }
@@ -42,10 +42,10 @@ model Client {
   email      String      @unique @db.VarChar(50)
   phone      String      @db.VarChar(20)
   created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  updated_at DateTime?   @default(now())
   status     Status      @default(ACTIVE)
 
-  reservations Reservation[] // relação com Reservation
+  reservations Reservation[] 
 
   @@map("clients")
 }
@@ -56,11 +56,11 @@ model Space {
   description     String           @db.Text
   capacity        Int
   created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
+  updated_at      DateTime?        @default(now())
   status          Status           @default(ACTIVE)
 
   reservations    Reservation[]
-  spaceResources  SpaceResource[] // relação N:N com Resource
+  spaceResources  SpaceResource[] 
 
   @@map("spaces")
 }
@@ -71,7 +71,7 @@ model Resource {
   quantity             Int
   description          String?               @db.Text
   created_at           DateTime              @default(now())
-  updated_at           DateTime              @updatedAt
+  updated_at           DateTime?              @default(now())
   status               Status                @default(ACTIVE)
 
   spaceResources       SpaceResource[] 
@@ -88,7 +88,7 @@ model Reservation {
   start_date           DateTime
   end_date             DateTime
   created_at           DateTime              @default(now())
-  updated_at           DateTime              @updatedAt
+  updated_at           DateTime?             @default(now())
   status               ReservationStatus     @default(OPEN)
   closed_at            DateTime?
 
