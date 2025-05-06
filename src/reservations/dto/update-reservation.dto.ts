@@ -2,16 +2,7 @@ import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsArray } from 'class-vali
 import { ReservationStatus } from '@prisma/client';
 
 export class UpdateReservationDto {
-  @IsOptional()
-  @IsInt()
-  @IsNotEmpty()
-  client_id?: number; 
-
-  @IsOptional()
-  @IsInt()
-  @IsNotEmpty()
-  space_id?: number; 
-
+  
   @IsOptional()
   @IsDateString()
   @IsNotEmpty()
@@ -21,14 +12,6 @@ export class UpdateReservationDto {
   @IsDateString()
   @IsNotEmpty()
   end_date?: string; 
-
-  @IsOptional()
-  @IsArray()
-  @IsNotEmpty()
-  resources?: Array<{
-    resource_id: number; 
-    quantity: number;  
-  }>;
 
   @IsOptional()
   @IsNotEmpty()

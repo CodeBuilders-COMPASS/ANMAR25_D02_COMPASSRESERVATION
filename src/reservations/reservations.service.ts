@@ -150,32 +150,32 @@ export class ReservationService {
     throw new NotFoundException('Reservation not found');
     }
 
-    if (reservation.status !== ReservationStatus.OPEN) {
-    throw new BadRequestException('Only reservations with status OPEN can be updated');
-    }
-    
-    if (updateReservationDto.resources && updateReservationDto.resources.length > 0) {
-    
-    await this.prisma.reservationResource.deleteMany({
-        where: { reservation_id: id },
-    });
-
-    await this.prisma.reservationResource.createMany({
-        data: updateReservationDto.resources.map((r) => ({
-        reservation_id: id,
-        resource_id: r.resource_id,
-        quantity: r.quantity,
-        })),
-    });
+    if (updateReservationDto.status === ReservationStatus.CANCELLED) {
+    throw new BadRequestException("Status cannot be changed to CANCELLED");
     }
 
-    const dataToUpdate: any = {
-    ...(updateReservationDto.client_id && { client_id: updateReservationDto.client_id }),
-    ...(updateReservationDto.space_id && { space_id: updateReservationDto.space_id }),
-    ...(updateReservationDto.start_date && { start_date: new Date(updateReservationDto.start_date) }),
-    ...(updateReservationDto.end_date && { end_date: new Date(updateReservationDto.end_date) }),
-    ...(updateReservationDto.status && { status: updateReservationDto.status }),
-    };
+    if(reservation.status !== ReservationStatus.OPEN && updateReservationDto.status === ReservationStatus.APPROVED){
+      throw new BadRequestException("Only reservations with status OPEN can be updated to APPROVED");
+    }
+
+    if(reservation.status !== ReservationStatus.APPROVED && updateReservationDto.status === ReservationStatus.CLOSED){
+      throw new BadRequestException("Only reservations with status APPROVED can be updated to CLOSED ");
+    }
+    
+    const dataToUpdate: Prisma.ReservationUpdateInput = {};
+    if(updateReservationDto.start_date){
+      dataToUpdate.start_date = updateReservationDto.start_date;
+    }
+    if(updateReservationDto.end_date){
+      dataToUpdate.end_date = updateReservationDto.end_date;
+    }
+    if(updateReservationDto.status){
+      dataToUpdate.status = updateReservationDto.status;
+    }
+
+    if(updateReservationDto.status === ReservationStatus.CLOSED){
+      dataToUpdate.closed_at = new Date();
+    }
 
     const updatedReservation = await this.prisma.reservation.update({
     where: { id },
