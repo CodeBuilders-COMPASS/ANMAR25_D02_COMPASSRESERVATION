@@ -1,30 +1,35 @@
 import { IsOptional, IsString, IsInt, IsEnum, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { StatusEnum } from 'src/enums/status.enum';
-
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class FilterSpaceDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
+    @ApiPropertyOptional({ example: 'Meeting Room', description: 'Filter by space name' })
+    @IsOptional()
+    @IsString()
+    name?: string;
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  capacity?: number;
+    @ApiPropertyOptional({ example: 5, description: 'Filter by minimum capacity' })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
+    capacity?: number;
 
-  @IsOptional()
-  @IsEnum(StatusEnum)
-  status?: StatusEnum;
+    @ApiPropertyOptional({ enum: StatusEnum, example: StatusEnum.ACTIVE, description: 'Filter by status' })
+    @IsOptional()
+    @IsEnum(StatusEnum)
+    status?: StatusEnum;
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  page?: number;
+    @ApiPropertyOptional({ example: 1, description: 'Page number', default: 1 })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    page?: number;
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  limit?: number;
+    @ApiPropertyOptional({ example: 10, description: 'Items per page', default: 10 })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    limit?: number;
 }
