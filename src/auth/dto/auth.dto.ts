@@ -18,7 +18,7 @@ export class LoginDto {
 
 export class LoginResponseDto {
   @ApiProperty({
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
     description: 'JWT access token for authenticated requests',
   })
   access_token: string;

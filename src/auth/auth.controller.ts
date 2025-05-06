@@ -20,7 +20,7 @@ export class AuthController {
     status: 401, 
     description: 'Invalid credentials' 
   })
-  async login(@Body() body: LoginDto) {
+  async login(@Body() body: { email: string; password: string }) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -28,3 +28,14 @@ export class AuthController {
     return this.authService.login(user);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
