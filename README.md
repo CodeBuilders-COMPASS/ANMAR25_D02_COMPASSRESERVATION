@@ -2,7 +2,15 @@
 
 ## Overview
 
+This API allows users to create, view, update, and manage reservations. Key functionalities include user authentication, client management, resource inventory, space administration, and detailed reservation handling with status transitions and conflict checking.
 
+## Accessing API Documentation (Swagger)
+
+The API documentation is generated using Swagger and can be accessed through your browser once the application is running.
+
+- **Default URL:** `http://localhost:3000/api/v1/docs`
+
+Replace `3000` with the `PORT` configured in your `.env` file if it's different.
 
 ## Technologies Stack
 
