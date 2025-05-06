@@ -28,4 +28,13 @@ export const prismaMock = {
     findMany: jest.fn(),
     update: jest.fn(),
   },
+
+  reservation: {
+    create: jest.fn(),
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    update: jest.fn(),
+    cancel: jest.fn(),
+    count: jest.fn(),
+  }
 };
