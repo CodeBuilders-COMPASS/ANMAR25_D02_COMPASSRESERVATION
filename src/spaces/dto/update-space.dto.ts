@@ -13,11 +13,4 @@ export class UpdateSpaceDto {
   @IsInt()
   @Min(1)
   capacity?: number;
-
-  @IsOptional()
-  @IsArray()
-  resources?: Array<{
-    resource_id: number;
-  }>;
-
 }

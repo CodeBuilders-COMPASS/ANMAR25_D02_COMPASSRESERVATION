@@ -11,7 +11,7 @@ import { StatusEnum } from '../enums/status.enum';
 
 @Injectable()
 export class SpacesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createSpaceDto: CreateSpaceDto) {
     const exists = await this.prisma.space.findUnique({
@@ -29,7 +29,7 @@ export class SpacesService {
         name,
         description,
         capacity,
-        updated_at: null, 
+        updated_at: null,
         status: StatusEnum.ACTIVE,
         spaceResources: {
           create: resources.map((r) => ({
@@ -103,21 +103,8 @@ export class SpacesService {
       if (nameExists && nameExists.id !== id) {
         throw new BadRequestException('Space with this name already exists.');
       }
-    }
-
-    if (updateDto.resources && updateDto.resources.length > 0) {
-      await this.prisma.spaceResource.deleteMany({
-        where: { space_id: id },
-      });
-
-      await this.prisma.spaceResource.createMany({
-        data: updateDto.resources.map((r) => ({
-          space_id: id,
-          resource_id: r.resource_id,
-        })),
-      });
-    }
-
+    }   
+ 
     return this.prisma.space.update({
       where: { id },
       data: {
