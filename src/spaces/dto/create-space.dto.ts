@@ -11,7 +11,7 @@ class SpaceResource {
 export class CreateSpaceDto {
     @ApiProperty({ example: 'Meeting Room A', description: 'Name of the space', minLength: 3, maxLength: 56 })
     @IsNotEmpty()
-    @Length(3, 56)
+    @Length(3, 50)
     name: string;
 
     @ApiProperty({ example: 'A large meeting room with projector', description: 'Description of the space' })
