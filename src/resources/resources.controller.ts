@@ -7,7 +7,9 @@ import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
 import { ResourceExistsPipe } from 'src/pipes/resource-exists.pipe';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT-auth')
 @ApiTags('resources')
 @Controller('resources')
 @UseGuards(JwtAuthGuard)
