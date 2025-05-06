@@ -20,7 +20,10 @@
 - **Validation**
   - `class-validator`: ^0.14.1
   - `class-transformer`: ^0.5.1
-
+- **API Documentation**
+  - `@nestjs/swagger`: ^11.2.0 
+- **Middleware & Utilities**
+  - `cors`: ^2.8.5
 ### Runtime
 - **Node.js**: (version should be specified in your .nvmrc or engine field)
 - **TypeScript**: ^5.7.3
@@ -746,8 +749,7 @@ This API provides CRUD operations for managing resources in the system. All endp
 ```json
 {
   "name": "Updated Name",
-  "description": "Updated description",
-  "quantity": 15
+  "description": "Updated description"
 }
 ```
 
@@ -810,7 +812,6 @@ This API provides CRUD operations for managing resources in the system. All endp
 ### Update Resource
 - All fields optional but at least one required
 - `name`: If provided, must be unique
-- `quantity`: If provided, must be positive integer
 
 ### Filter Resources
 - `name`: Optional string filter
@@ -857,7 +858,7 @@ This API provides CRUD operations for managing resources in the system. All endp
   "description": "A large conference room with a projector.",
   "capacity": 20,
   "status": "ACTIVE",
-  "createdAt": "2025-04-29T02:34:15.671Z"
+  "createdAt": "2025-04-29T02:34:15.671Z",
   "updateAt": "null"
 }
 ```
@@ -938,7 +939,7 @@ This API provides CRUD operations for managing resources in the system. All endp
       "description": "A large conference room with a projector.",
       "capacity": 20,
       "status": "ACTIVE",
-      "createdAt": "2025-04-29T01:59:07.671Z"
+      "createdAt": "2025-04-29T01:59:07.671Z",
       "updateAt": "null"
     },
     {
@@ -987,7 +988,7 @@ This API provides CRUD operations for managing resources in the system. All endp
 
 ### 5. Deactivate Space (Soft Delete)
 
-**PATCH** `api/v1/spaces/:id/deactivate`
+**DELETE** `api/v1/spaces/:id/deactivate`
 
 (Note: **Doesn't physically delete**, only changes status.)
 
@@ -1155,15 +1156,9 @@ All endpoints require JWT authentication.
 **Request:**
 ```json
 {
-  "space_id": 2,
   "start_date": "2023-12-01T11:00:00Z",
   "end_date": "2023-12-01T13:00:00Z",
-  "resources": [
-    {
-      "resource_id": 2,
-      "quantity": 1
-    }
-  ]
+  "status": "ACTIVE"
 }
 ```
 
@@ -1209,8 +1204,12 @@ All endpoints require JWT authentication.
 - Resource quantities must be available
 
 ### Update Reservation
-- Only OPEN reservations can be updated
 - All referenced entities must exist and be active
+- If the `status` field is provided in the update request, it must adhere to the following rules:
+    1. The status **cannot** be changed to `CANCELLED` through this update endpoint.
+    2. The status can only be changed to `APPROVED` if the current status is `OPEN`
+    3. The status can only be changed to `CLOSED` if the current status is `APPROVED`.
+      
 
 ### Cancel Reservation
 - Only OPEN reservations can be cancelled
