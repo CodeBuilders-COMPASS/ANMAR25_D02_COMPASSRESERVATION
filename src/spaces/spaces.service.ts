@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { FilterSpaceDto } from './dto/filter-space.dto';
@@ -17,15 +21,18 @@ export class SpacesService {
     if (exists) {
       throw new BadRequestException('Space with this name already exists.');
     }
+
     const { name, description, capacity, resources } = createSpaceDto;
+
     return this.prisma.space.create({
       data: {
         name,
         description,
         capacity,
+        updated_at: null, 
         status: StatusEnum.ACTIVE,
         spaceResources: {
-          create: resources.map(r=> ({
+          create: resources.map((r) => ({
             resource_id: r.resource_id,
           })),
         },
@@ -34,14 +41,7 @@ export class SpacesService {
   }
 
   async findAll(filterDto: FilterSpaceDto) {
-    const {
-      name,
-      capacity,
-      status,
-      page = 1,
-      limit = 10,
-    } = filterDto;
-
+    const { name, capacity, status, page = 1, limit = 10 } = filterDto;
     const skip = (page - 1) * limit;
 
     const where = {
@@ -75,7 +75,7 @@ export class SpacesService {
   }
 
   async findOne(id: number) {
-    const space = await this.prisma.space.findUnique({ 
+    const space = await this.prisma.space.findUnique({
       where: { id },
       include: {
         spaceResources: {
@@ -85,9 +85,11 @@ export class SpacesService {
         },
       },
     });
+
     if (!space) {
       throw new NotFoundException(`Space with ID ${id} not found.`);
     }
+
     return space;
   }
 
@@ -108,18 +110,19 @@ export class SpacesService {
       data: {
         name: updateDto.name,
         description: updateDto.description,
-        capacity: updateDto.capacity, 
+        capacity: updateDto.capacity,
         updated_at: new Date(),
       },
     });
   }
 
   async remove(id: number) {
-    await this.findOne(id); 
+    await this.findOne(id);
+
     return this.prisma.space.update({
       where: { id },
       data: {
-        status: StatusEnum.INACTIVE, 
+        status: StatusEnum.INACTIVE,
         updated_at: new Date(),
       },
     });
