@@ -5,7 +5,7 @@ export const prismaMock = {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    count: jest.fn(), 
+    count: jest.fn(),
   },
   resource: {
     findMany: jest.fn(),
@@ -13,14 +13,15 @@ export const prismaMock = {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    count: jest.fn(), 
+    count: jest.fn(),
   },
-  client:  {
+  client: {
     create: jest.fn(),
     update: jest.fn(),
     findAll: jest.fn(),
     findById: jest.fn(),
     deactivate: jest.fn(),
+    findUnique: jest.fn(),
   },
   user: {
     findUnique: jest.fn(),
@@ -28,7 +29,6 @@ export const prismaMock = {
     findMany: jest.fn(),
     update: jest.fn(),
   },
-
   reservation: {
     create: jest.fn(),
     findMany: jest.fn(),
@@ -36,5 +36,16 @@ export const prismaMock = {
     update: jest.fn(),
     cancel: jest.fn(),
     count: jest.fn(),
-  }
+  },
+  reservationResource: { 
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    createMany: jest.fn(), 
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(), 
+    count: jest.fn(),
+  },
 };
+export type PrismaMock = typeof prismaMock;
