@@ -7,13 +7,16 @@ export class ResourcesValidationExistPipe implements PipeTransform {
   constructor(private readonly prisma: PrismaService) {}
 
   async transform(value: any) {
-    for (const res of value.resources) {
-      const resource = await this.prisma.resource.findUnique({
-        where: { id: res.resource_id },
-      });
 
-      if (!resource || resource.status !== StatusEnum.ACTIVE) {
-        throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
+    if (value.resources && Array.isArray(value.resources)) {
+      for (const res of value.resources) {
+        const resource = await this.prisma.resource.findUnique({
+          where: { id: res.resource_id },
+        });
+
+        if (!resource || resource.status !== StatusEnum.ACTIVE) {
+          throw new BadRequestException(`Inactive or nonexistent resource ID ${res.resource_id}`);
+        }
       }
     }
 
