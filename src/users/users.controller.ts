@@ -7,9 +7,9 @@ import { PositiveIntPipe } from '../pipes/positive-int.pipe';
 import { UserExistsPipe } from '../pipes/user-exists.pipe';
 import { FilterUserDto } from './dto/filter-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-
-
+@ApiBearerAuth('JWT-auth')
 @ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)

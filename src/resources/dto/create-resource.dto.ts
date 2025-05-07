@@ -5,7 +5,7 @@ export class CreateResourceDto {
   @ApiProperty({ example: 'Resource Name', description: 'The name of the resource', minLength: 3, maxLength: 56 })
   @IsString()
   @IsNotEmpty()
-  @Length(3, 56)
+  @Length(3, 50)
   name: string;
 
   @ApiProperty({ example: 'Resource description', description: 'The description of the resource', required: false })

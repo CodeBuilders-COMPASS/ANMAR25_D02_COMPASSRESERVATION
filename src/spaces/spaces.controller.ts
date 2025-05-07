@@ -8,8 +8,9 @@ import { SpaceExistsPipe } from '../pipes/space-exists.pipe';
 import { ResourcesValidationExistPipe } from '../pipes/validate-resources-exist.pipe';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-
+@ApiBearerAuth('JWT-auth')
 @ApiTags('spaces')
 @Controller('spaces')
 @UseGuards(JwtAuthGuard)
