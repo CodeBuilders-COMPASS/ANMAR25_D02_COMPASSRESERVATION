@@ -1,11 +1,4 @@
 import { Type } from "class-transformer";
-import {
-  IsEmail,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-} from "class-validator";
 import { StatusEnum } from "../../enums/status.enum";
 import { IsEmail, IsEnum, IsInt, IsOptional, IsString } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
