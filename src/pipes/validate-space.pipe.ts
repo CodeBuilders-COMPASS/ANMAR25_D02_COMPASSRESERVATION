@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { StatusEnum } from 'src/enums/status.enum';
+import { StatusEnum } from '../enums/status.enum';
 
 @Injectable()
 export class SpaceValidationPipe implements PipeTransform {

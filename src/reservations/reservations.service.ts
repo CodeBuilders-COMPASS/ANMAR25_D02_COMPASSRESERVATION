@@ -2,10 +2,10 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { ReservationStatus } from 'src/enums/reservationStatus.enum';
+import { ReservationStatus } from '../enums/reservationStatus.enum';
 import { FilterReservationDto } from './dto/filter-reservation.dto';
 import { Prisma } from '@prisma/client';
-import { StatusEnum } from 'src/enums/status.enum';
+import { StatusEnum } from '../enums/status.enum';
 
 @Injectable()
 export class ReservationService {

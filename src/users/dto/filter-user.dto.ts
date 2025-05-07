@@ -1,7 +1,15 @@
 import { Type } from "class-transformer";
+import {
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { StatusEnum } from "../../enums/status.enum";
 import { IsEmail, IsEnum, IsInt, IsOptional, IsString } from "class-validator";
-import { StatusEnum } from "src/enums/status.enum";
 import { ApiPropertyOptional } from "@nestjs/swagger";
+
 
 export class FilterUserDto {
   @ApiPropertyOptional({ 

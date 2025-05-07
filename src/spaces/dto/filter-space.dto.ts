@@ -1,7 +1,8 @@
 import { IsOptional, IsString, IsInt, IsEnum, Min } from 'class-validator';
 import { Type } from 'class-transformer';
-import { StatusEnum } from 'src/enums/status.enum';
+import { StatusEnum } from '../../enums/status.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+
 
 export class FilterSpaceDto {
     @ApiPropertyOptional({ example: 'Meeting Room', description: 'Filter by space name' })
