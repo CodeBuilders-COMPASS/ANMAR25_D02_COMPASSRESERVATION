@@ -19,7 +19,7 @@ import { ClientValidationPipe } from '../pipes/validate-client.pipe';
 import { PositiveIntPipe } from '../pipes/positive-int.pipe';
 import { ClientExistsPipe } from '../pipes/client-exist.pipe';
 import { FilterClientDto } from './dto/filter-client.dto';
-import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

@@ -3,9 +3,9 @@ import { ResourceService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { FilterResourceDto } from './dto/filter-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
-import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
-import { ResourceExistsPipe } from 'src/pipes/resource-exists.pipe';
-import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { PositiveIntPipe } from '../pipes/positive-int.pipe';
+import { ResourceExistsPipe } from '../pipes/resource-exists.pipe';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

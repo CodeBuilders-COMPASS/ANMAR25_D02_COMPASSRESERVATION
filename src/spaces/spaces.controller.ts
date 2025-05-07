@@ -3,10 +3,10 @@ import { FilterSpaceDto } from './dto/filter-space.dto';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 import { SpacesService } from './spaces.service';
-import { PositiveIntPipe } from 'src/pipes/positive-int.pipe';
-import { SpaceExistsPipe } from 'src/pipes/space-exists.pipe';
-import { ResourcesValidationExistPipe } from 'src/pipes/validate-resources-exist.pipe';
-import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { PositiveIntPipe } from '../pipes/positive-int.pipe';
+import { SpaceExistsPipe } from '../pipes/space-exists.pipe';
+import { ResourcesValidationExistPipe } from '../pipes/validate-resources-exist.pipe';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 

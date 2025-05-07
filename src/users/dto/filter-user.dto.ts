@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { StatusEnum } from "src/enums/status.enum";
+import { StatusEnum } from "../../enums/status.enum";
 
 export class FilterUserDto {
   @IsOptional()

@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ReservationStatus } from 'src/enums/reservationStatus.enum';
+import { ReservationStatus } from '../enums/reservationStatus.enum';
 
 @Injectable()
 export class ReservationConflictPipe implements PipeTransform {
