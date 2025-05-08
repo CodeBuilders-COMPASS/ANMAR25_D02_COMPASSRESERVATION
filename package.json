@@ -17,10 +17,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
     "seed": "ts-node --transpile-only prisma/seed.ts",
-    "clear:db:test": "prisma migrate reset --force --skip-seed",
-    "migration:up": "prisma migrate deploy",
+    "test:e2e": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- npx jest --config ./test/jest-e2e.json",
+    "clear:db:test": "dotenv -e .env.test -- prisma migrate reset --force --skip-seed",
+    "migration:up": "dotenv -e .env.test -- prisma migrate deploy",
     "pretest:e2e": "npm run clear:db:test && npm run migration:up"
   },
   "dependencies": {
@@ -51,6 +51,7 @@
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
