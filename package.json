@@ -18,9 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "seed": "ts-node --transpile-only prisma/seed.ts",
-    "test:e2e": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- npx jest --config ./test/jest-e2e.json",
-    "clear:db:test": "dotenv -e .env.test -- prisma migrate reset --force --skip-seed",
-    "migration:up": "dotenv -e .env.test -- prisma migrate deploy",
+    "test:e2e": "cross-env NODE_ENV=test DATABASE_URL=\"mysql://root:root@localhost:3306/reservation_test\" npx prisma migrate deploy && npx jest --config ./test/jest-e2e.json",
+    "clear:db:test": "cross-env NODE_ENV=test DATABASE_URL=\"mysql://root:root@localhost:3306/reservation_test\" prisma migrate reset --force --skip-seed",
+    "migration:up": "cross-env DATABASE_URL=\"mysql://root:root@localhost:3306/reservation_test\" prisma migrate deploy",
     "pretest:e2e": "npm run clear:db:test && npm run migration:up"
   },
   "dependencies": {
